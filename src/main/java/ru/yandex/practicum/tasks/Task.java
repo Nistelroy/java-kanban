@@ -2,23 +2,17 @@ package main.java.ru.yandex.practicum.tasks;
 
 import main.java.ru.yandex.practicum.manager.TaskManager;
 
-public class Task implements HasId{
+public class Task implements HasId {
     private String name;
     private String description;
     private int id;
     private String status;
 
-
-
-
     public Task(String name, String description) {
         this.name = name;
         this.description = description;
         this.status = "NEW";
-
     }
-
-
 
     public String getName() {
         return name;
@@ -28,7 +22,6 @@ public class Task implements HasId{
         return description;
     }
 
-
     public String getStatus() {
         return status;
     }
@@ -37,11 +30,11 @@ public class Task implements HasId{
         this.status = status;
     }
 
-
     @Override
     public int getId() {
         return id;
     }
+
     @Override
     public void setId(int id) {
         this.id = id;
@@ -50,25 +43,14 @@ public class Task implements HasId{
     @Override
     public String toString() {
         String result = "Task{" +
-                "name='" + name + '\'' ;
-        if(getDescription() != null) {
+                "name='" + name + '\'';
+        if (getDescription() != null) {
             result = result + ", description.length=" + description.length();
         } else {
             result = result + ", description.length=null";
         }
-        return result +  ", id=" + id +
+        return result + ", id=" + id +
                 ", status='" + status + '\'' +
                 '}';
-
-
-
-
-
-        /*return "Task{" +
-                "name='" + name + '\'' +
-                ", description='" + description.length() + '\'' +
-                ", id=" + id +
-                ", status='" + status + '\'' +
-                '}';*/
     }
 }

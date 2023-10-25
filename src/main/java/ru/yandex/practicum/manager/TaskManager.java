@@ -44,7 +44,6 @@ public class TaskManager {
         subtasksMap.put(newId, task);
     }
 
-
     public void changeTaskById(int id, String status) {
         Task newTask = tasksMap.get(id);
         newTask.setStatus(status);
@@ -56,7 +55,6 @@ public class TaskManager {
         newSubtask.setStatus(status);
 
         Epic newEpic = epicMap.get(newSubtask.getIdEpic());
-
         for (int i = 0; i < newEpic.getIdSubtask().size(); i++) {
 
             if (subtasksMap.get(newEpic.getIdSubtask().get(i)).getStatus().equals("IN_PROGRESS")) {
@@ -66,31 +64,22 @@ public class TaskManager {
             if (subtasksMap.get(newEpic.getIdSubtask().get(i)).getStatus().equals("DONE")) {
                 newEpic.setStatus("DONE");
             }
-
         }
-
         subtasksMap.put(id, newSubtask);
-
     }
 
-
     public void deleteTaskById(int id) {
-
         if (tasksMap.containsKey(id)) {
             tasksMap.remove(id);
         } else if (epicMap.containsKey(id)) {
-
             for (int i = 0; i < epicMap.get(id).getIdSubtask().size(); i++) {
                 subtasksMap.remove(epicMap.get(id).getIdSubtask().get(i));
             }
             epicMap.remove(id);
-
         } else if (subtasksMap.containsKey(id)) {
-
             epicMap.get(subtasksMap.get(id).getIdEpic()).removeIdSubtask(id);
             subtasksMap.remove(id);
         }
-
     }
 
     public void replacementTask(Task task) {
@@ -108,7 +97,6 @@ public class TaskManager {
     public ArrayList<Subtask> getAllSubtaskFromEpicById(int id) {
         if (epicMap.containsKey(id)) {
             ArrayList<Subtask> arrayList = new ArrayList<>();
-
             for (int i = 0; i < epicMap.get(id).getIdSubtask().size(); i++) {
                 arrayList.add(subtasksMap.get(epicMap.get(id).getIdSubtask().get(i)));
             }
@@ -141,6 +129,4 @@ public class TaskManager {
         epicMap.clear();
         subtasksMap.clear();
     }
-
-
 }
