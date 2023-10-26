@@ -50,7 +50,6 @@ public class TaskManager {
                     task.setStatus(DONE);
                 }
             }
-
             epicMap.put(task.getId(), task);
         } else {
             int newId = createId();
@@ -62,10 +61,10 @@ public class TaskManager {
     public void setSubtaskInMap(Subtask task) {
         if (subtasksMap.containsKey(task.getId())) {
             subtasksMap.put(task.getId(), task);
+
             Epic epic = epicMap.get(task.getIdEpic());
             ArrayList<Integer> allSubtaskId = epic.getIdSubtask();
             for (Integer integer : allSubtaskId) {
-
                 if (subtasksMap.get(integer).getStatus().equals(IN_PROGRESS)) {
                     epic.setStatus(IN_PROGRESS);
                     break;
@@ -74,7 +73,6 @@ public class TaskManager {
                     epic.setStatus(DONE);
                 }
             }
-
         } else {
             int newId = createId();
             task.setId(newId);
@@ -96,7 +94,6 @@ public class TaskManager {
             subtasksMap.remove(id);
         }
     }
-
 
     public ArrayList<Subtask> getAllSubtaskFromEpicById(int id) {
         if (epicMap.containsKey(id)) {
@@ -133,6 +130,4 @@ public class TaskManager {
         epicMap.clear();
         subtasksMap.clear();
     }
-
-
 }

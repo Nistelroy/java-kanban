@@ -25,8 +25,6 @@ public class Epic extends Task implements HasId {
         idSubtask.add(idNewSubtask);
     }
 
-
-
     public void removeEpicSubtasks(int remId) {
         for (int i = 0; i < idSubtask.size(); i++) {
             if (idSubtask.get(i) == remId) {

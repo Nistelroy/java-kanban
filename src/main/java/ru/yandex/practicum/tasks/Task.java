@@ -1,9 +1,5 @@
 package main.java.ru.yandex.practicum.tasks;
 
-import main.java.ru.yandex.practicum.manager.TaskManager;
-
-import java.util.Objects;
-
 import static main.java.ru.yandex.practicum.manager.ConstantsStatus.*;
 
 public class Task implements HasId {
@@ -43,8 +39,6 @@ public class Task implements HasId {
     public void setId(int id) {
         this.id = id;
     }
-
-
 
     @Override
     public String toString() {
