@@ -5,6 +5,8 @@ import main.java.ru.yandex.practicum.tasks.Epic;
 import main.java.ru.yandex.practicum.tasks.Subtask;
 import main.java.ru.yandex.practicum.tasks.Task;
 
+import static main.java.ru.yandex.practicum.manager.ConstantsStatus.*;
+
 public class Main {
 
     public static void main(String[] args) {
@@ -14,43 +16,63 @@ public class Main {
         TaskManager taskManager = new TaskManager();
 
         task = new Task("купить", "купить-купить");
-        taskManager.setNewTask(task);
+        taskManager.setTaskInMap(task);
         task = new Task("найти", "найти-найти");
-        taskManager.setNewTask(task);
+        taskManager.setTaskInMap(task);
 
         epic = new Epic("Поездка", "Поездка-Поездка");
-        taskManager.setNewEpic(epic);
+        taskManager.setEpicInMap(epic);
         subtask = new Subtask("машина", "машина-машина", epic.getId());
-        taskManager.setNewSubtask(subtask);
+        taskManager.setSubtaskInMap(subtask);
         subtask = new Subtask("бензин", "бензин-бензин", epic.getId());
-        taskManager.setNewSubtask(subtask);
+        taskManager.setSubtaskInMap(subtask);
 
         epic = new Epic("Прогулка", "Прогулка-Прогулка");
-        taskManager.setNewEpic(epic);
+        taskManager.setEpicInMap(epic);
         subtask = new Subtask("еда", "еда-еда", epic.getId());
-        taskManager.setNewSubtask(subtask);
+        taskManager.setSubtaskInMap(subtask);
 
-        System.out.println(taskManager.getAllTask());
-        System.out.println(taskManager.getAllEpic());
-        System.out.println(taskManager.getAllSubtask() + "\n");
+        System.out.println(taskManager.getAllTask()+"\n"+taskManager.getAllEpic()+"\n"+taskManager.getAllSubtask()+"\n");
 
-        taskManager.changeTaskById(1, "DONE");
-        taskManager.changeTaskById(2, "IN_PROGRESS");
-        taskManager.changeSubtaskById(4, "IN_PROGRESS");
-        taskManager.changeSubtaskById(5, "DONE");
-        taskManager.changeSubtaskById(7, "IN_PROGRESS");
 
-        System.out.println(taskManager.getAllTask());
-        System.out.println(taskManager.getAllEpic());
-        System.out.println(taskManager.getAllSubtask() + "\n");
+        task = new Task("Другая", "Другая-Другая");
+        task.setStatus(IN_PROGRESS);
+        task.setId(1);
+        taskManager.setTaskInMap(task);
+
+        subtask = new Subtask("Другая", "Другая-Другая",3);
+        subtask.setStatus(IN_PROGRESS);
+        subtask.setId(5);
+        taskManager.setSubtaskInMap(subtask);
+        subtask = new Subtask("Другая", "Другая-Другая",3);
+        subtask.setStatus(DONE);
+        subtask.setId(4);
+        taskManager.setSubtaskInMap(subtask);
+
+        System.out.println(taskManager.getAllTask()+"\n"+taskManager.getAllEpic()+"\n"+taskManager.getAllSubtask()+"\n");
+
+        epic = new Epic("Новая", "Новая-Новая");
+        epic.setIdSubtask(4);
+        epic.setIdSubtask(5);
+        epic.setId(3);
+        taskManager.setEpicInMap(epic);
+
+        subtask = new Subtask("Свежая", "Свежая-Свежая",6);
+        subtask.setStatus(IN_PROGRESS);
+        subtask.setId(7);
+        taskManager.setSubtaskInMap(subtask);
+
+        subtask = new Subtask("Свежая", "Свежая-Свежая",3);
+        subtask.setStatus(DONE);
+        subtask.setId(5);
+        taskManager.setSubtaskInMap(subtask);
+
+
+        System.out.println(taskManager.getAllTask()+"\n"+taskManager.getAllEpic()+"\n"+taskManager.getAllSubtask()+"\n");
 
         taskManager.deleteTaskById(2);
         taskManager.deleteTaskById(3);
 
-        taskManager.changeSubtaskById(7, "DONE");
-
-        System.out.println(taskManager.getAllTask());
-        System.out.println(taskManager.getAllEpic());
-        System.out.println(taskManager.getAllSubtask());
+        System.out.println(taskManager.getAllTask()+"\n"+taskManager.getAllEpic()+"\n"+taskManager.getAllSubtask()+"\n");
     }
 }

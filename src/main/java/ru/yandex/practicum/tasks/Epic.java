@@ -1,7 +1,5 @@
 package main.java.ru.yandex.practicum.tasks;
 
-import main.java.ru.yandex.practicum.manager.TaskManager;
-
 import java.util.ArrayList;
 
 public class Epic extends Task implements HasId {
@@ -27,7 +25,9 @@ public class Epic extends Task implements HasId {
         idSubtask.add(idNewSubtask);
     }
 
-    public void removeIdSubtask(int remId) {
+
+
+    public void removeEpicSubtasks(int remId) {
         for (int i = 0; i < idSubtask.size(); i++) {
             if (idSubtask.get(i) == remId) {
                 idSubtask.remove(i);
