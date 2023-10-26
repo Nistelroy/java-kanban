@@ -27,6 +27,16 @@ public class TaskManager {
         return subtasksMap.get(id);
     }
 
+    public void setTask(Task task) {
+        if (task.getClass().equals(Task.class)) {
+            setTaskInMap(task);
+        } else if (task.getClass().equals(Epic.class)) {
+            setEpicInMap((Epic) task);
+        }else if (task.getClass().equals(Subtask.class)) {
+            setSubtaskInMap((Subtask) task);
+        }
+    }
+
     public void setTaskInMap(Task task) {
         if (tasksMap.containsKey(task.getId())) {
             tasksMap.put(task.getId(), task);
