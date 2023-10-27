@@ -4,13 +4,12 @@ import main.java.ru.yandex.practicum.tasks.Epic;
 import main.java.ru.yandex.practicum.tasks.Subtask;
 import main.java.ru.yandex.practicum.tasks.Task;
 
-import static main.java.ru.yandex.practicum.manager.ConstantsStatus.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class TaskManager {
-    private static int idForNewTask;
+    private int idForNewTask; // изначально подумал, что статик поможет в последствии перекидывать задачи из разных менеджеров между собой)
     private final HashMap<Integer, Task> tasksMap = new HashMap<>();
     private final HashMap<Integer, Epic> epicMap = new HashMap<>();
     private final HashMap<Integer, Subtask> subtasksMap = new HashMap<>();
@@ -27,17 +26,7 @@ public class TaskManager {
         return subtasksMap.get(id);
     }
 
-    public void setTask(Task task) {
-        if (task.getClass().equals(Task.class)) {
-            setTaskInMap(task);
-        } else if (task.getClass().equals(Epic.class)) {
-            setEpicInMap((Epic) task);
-        }else if (task.getClass().equals(Subtask.class)) {
-            setSubtaskInMap((Subtask) task);
-        }
-    }
-
-    public void setTaskInMap(Task task) {
+    public void setNewTaskOrSwapInMap(Task task) {
         if (tasksMap.containsKey(task.getId())) {
             tasksMap.put(task.getId(), task);
         } else {
@@ -47,19 +36,9 @@ public class TaskManager {
         }
     }
 
-    public void setEpicInMap(Epic task) {
+    public void setNewEpicOrSwapInMap(Epic task) {
         if (epicMap.containsKey(task.getId())) {
-            ArrayList<Integer> allSubtaskId = task.getIdSubtask();
-
-            for (Integer integer : allSubtaskId) {
-                if (subtasksMap.get(integer).getStatus().equals(IN_PROGRESS)) {
-                    task.setStatus(IN_PROGRESS);
-                    break;
-                }
-                if (subtasksMap.get(integer).getStatus().equals(DONE)) {
-                    task.setStatus(DONE);
-                }
-            }
+            statusEpicChanger(task);
             epicMap.put(task.getId(), task);
         } else {
             int newId = createId();
@@ -68,21 +47,13 @@ public class TaskManager {
         }
     }
 
-    public void setSubtaskInMap(Subtask task) {
+    public void setNewSubtaskOrSwapInMap(Subtask task) {
         if (subtasksMap.containsKey(task.getId())) {
             subtasksMap.put(task.getId(), task);
+            Epic thisEpic = epicMap.get(task.getIdEpic());
+            statusEpicChanger(thisEpic);
 
-            Epic epic = epicMap.get(task.getIdEpic());
-            ArrayList<Integer> allSubtaskId = epic.getIdSubtask();
-            for (Integer integer : allSubtaskId) {
-                if (subtasksMap.get(integer).getStatus().equals(IN_PROGRESS)) {
-                    epic.setStatus(IN_PROGRESS);
-                    break;
-                }
-                if (subtasksMap.get(integer).getStatus().equals(DONE)) {
-                    epic.setStatus(DONE);
-                }
-            }
+
         } else {
             int newId = createId();
             task.setId(newId);
@@ -91,29 +62,31 @@ public class TaskManager {
         }
     }
 
-    public void deleteTaskById(int id) {
-        if (tasksMap.containsKey(id)) {
-            tasksMap.remove(id);
-        } else if (epicMap.containsKey(id)) {
-            for (int i = 0; i < epicMap.get(id).getIdSubtask().size(); i++) {
-                subtasksMap.remove(epicMap.get(id).getIdSubtask().get(i));
-            }
-            epicMap.remove(id);
-        } else if (subtasksMap.containsKey(id)) {
-            epicMap.get(subtasksMap.get(id).getIdEpic()).removeEpicSubtasks(id);
-            subtasksMap.remove(id);
-        }
+    public void deleteTaskById(Integer id) {
+        tasksMap.remove(id);
     }
 
-    public ArrayList<Subtask> getAllSubtaskFromEpicById(int id) {
-        if (epicMap.containsKey(id)) {
-            ArrayList<Subtask> arrayList = new ArrayList<>();
-            for (int i = 0; i < epicMap.get(id).getIdSubtask().size(); i++) {
-                arrayList.add(subtasksMap.get(epicMap.get(id).getIdSubtask().get(i)));
-            }
-            return arrayList;
+    public void deleteEpicById(Integer id) {
+        for (int i = 0; i < epicMap.get(id).getIdSubtask().size(); i++) {
+            subtasksMap.remove(epicMap.get(id).getIdSubtask().get(i));
         }
-        return null;
+        epicMap.remove(id);
+    }
+
+    public void deleteSubtaskById(Integer id) {
+        epicMap.get(subtasksMap.get(id).getIdEpic()).removeEpicSubtasksById(id);
+        subtasksMap.remove(id);
+    }
+
+    public ArrayList<Subtask> getAllSubtaskFromEpicById(Integer id) {
+        ArrayList<Subtask> allSubtaskByEpic = new ArrayList<>();
+        if (epicMap.containsKey(id)) {
+            Epic thisEpic = epicMap.get(id);
+            for (Integer subtaskId : thisEpic.getIdSubtask()) {
+                allSubtaskByEpic.add(subtasksMap.get(subtaskId));
+            }
+        }
+        return allSubtaskByEpic;
     }
 
     private int createId() {
@@ -139,5 +112,29 @@ public class TaskManager {
     public void deleteAllEpic() {
         epicMap.clear();
         subtasksMap.clear();
+    }
+
+    public void deleteAllSubtask() {
+        for (Epic thisEpic : epicMap.values()) {
+            thisEpic.removeAllSubtasksInEpic();
+            thisEpic.setStatus(String.valueOf(ConstantsStatus.NEW));
+        }
+        subtasksMap.clear();
+    }
+
+    private void statusEpicChanger(Epic task) {
+        ArrayList<Integer> allSubtaskId = task.getIdSubtask();
+        for (Integer integer : allSubtaskId) {
+            if (subtasksMap.get(integer).getStatus().equals(String.valueOf(ConstantsStatus.IN_PROGRESS))) {
+                task.setStatus(String.valueOf(ConstantsStatus.IN_PROGRESS));
+                break;
+            }
+            if (subtasksMap.get(integer).getStatus().equals(String.valueOf(ConstantsStatus.DONE))) {
+                task.setStatus(String.valueOf(ConstantsStatus.DONE));
+            }
+        }
+        if (allSubtaskId.isEmpty()) {
+            task.setStatus(String.valueOf(ConstantsStatus.NEW));
+        }
     }
 }

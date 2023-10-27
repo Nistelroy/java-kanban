@@ -1,6 +1,6 @@
 package main.java.ru.yandex.practicum.tasks;
 
-public class Subtask extends Task implements HasId {
+public class Subtask extends Task {
     private final int idEpic;
 
     public Subtask(String name, String description, int idEpic) {

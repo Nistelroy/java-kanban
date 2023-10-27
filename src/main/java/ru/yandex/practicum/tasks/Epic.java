@@ -1,23 +1,18 @@
 package main.java.ru.yandex.practicum.tasks;
 
+import main.java.ru.yandex.practicum.manager.ConstantsStatus;
+
 import java.util.ArrayList;
 
-public class Epic extends Task implements HasId {
-    private String status;
+public class Epic extends Task {
     private ArrayList<Integer> idSubtask = new ArrayList<>();
 
     public Epic(String name, String description) {
         super(name, description);
-        status = "NEW";
-    }
-
-    @Override
-    public void setStatus(String status) {
-        this.status = status;
+        setStatus(String.valueOf(ConstantsStatus.NEW));
     }
 
     public ArrayList<Integer> getIdSubtask() {
-
         return idSubtask;
     }
 
@@ -25,12 +20,12 @@ public class Epic extends Task implements HasId {
         idSubtask.add(idNewSubtask);
     }
 
-    public void removeEpicSubtasks(int remId) {
-        for (int i = 0; i < idSubtask.size(); i++) {
-            if (idSubtask.get(i) == remId) {
-                idSubtask.remove(i);
-            }
-        }
+    public void removeEpicSubtasksById(Integer remId) {
+        idSubtask.remove(remId);
+    }
+
+    public void removeAllSubtasksInEpic() {
+        idSubtask.clear();
     }
 
     @Override
@@ -43,7 +38,7 @@ public class Epic extends Task implements HasId {
             result = result + ", description.length=null";
         }
         return result + ", id=" + super.getId() +
-                ", status='" + status + '\'' +
+                ", status='" + getStatus() + '\'' +
                 ", idSubtask=" + idSubtask + '\'' +
                 '}';
     }

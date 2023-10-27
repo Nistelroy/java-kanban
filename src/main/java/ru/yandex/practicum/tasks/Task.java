@@ -1,8 +1,8 @@
 package main.java.ru.yandex.practicum.tasks;
 
-import static main.java.ru.yandex.practicum.manager.ConstantsStatus.*;
+import main.java.ru.yandex.practicum.manager.ConstantsStatus;
 
-public class Task implements HasId {
+public class Task {
     private String name;
     private String description;
     private int id;
@@ -11,7 +11,15 @@ public class Task implements HasId {
     public Task(String name, String description) {
         this.name = name;
         this.description = description;
-        this.status = NEW;
+        this.status = String.valueOf(ConstantsStatus.NEW);
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public String getName() {
@@ -30,12 +38,10 @@ public class Task implements HasId {
         this.status = status;
     }
 
-    @Override
     public int getId() {
         return id;
     }
 
-    @Override
     public void setId(int id) {
         this.id = id;
     }
@@ -52,7 +58,5 @@ public class Task implements HasId {
         return result + ", id=" + id +
                 ", status='" + status + '\'' +
                 '}';
-
-
     }
 }

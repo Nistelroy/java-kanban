@@ -1,8 +1,7 @@
 package main.java.ru.yandex.practicum.manager;
 
-public class ConstantsStatus {
-    public static final String NEW = "NEW";
-    public static final String IN_PROGRESS = "IN_PROGRESS";
-    public static final String DONE = "DONE";
-
+public enum ConstantsStatus { // не понял я фишку енума, хотя там дальше будет на эту тему раздел, думаю там будет изложено лучше, чем я сейчас нагуглю)
+    NEW,
+    IN_PROGRESS,
+    DONE
 }
