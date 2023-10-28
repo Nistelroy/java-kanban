@@ -1,17 +1,17 @@
 package main.java.ru.yandex.practicum.tasks;
 
-import main.java.ru.yandex.practicum.manager.ConstantsStatus;
+import main.java.ru.yandex.practicum.manager.TaskStatus;
 
 public class Task {
     private String name;
     private String description;
     private int id;
-    private String status;
+    private TaskStatus status;
 
     public Task(String name, String description) {
         this.name = name;
         this.description = description;
-        this.status = String.valueOf(ConstantsStatus.NEW);
+        this.status = TaskStatus.NEW;
     }
 
     public void setName(String name) {
@@ -30,11 +30,11 @@ public class Task {
         return description;
     }
 
-    public String getStatus() {
+    public TaskStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(TaskStatus status) {
         this.status = status;
     }
 

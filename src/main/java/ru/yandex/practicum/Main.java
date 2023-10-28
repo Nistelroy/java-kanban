@@ -1,6 +1,6 @@
 package main.java.ru.yandex.practicum;
 
-import main.java.ru.yandex.practicum.manager.ConstantsStatus;
+import main.java.ru.yandex.practicum.manager.TaskStatus;
 import main.java.ru.yandex.practicum.manager.TaskManager;
 import main.java.ru.yandex.practicum.tasks.Epic;
 import main.java.ru.yandex.practicum.tasks.Subtask;
@@ -17,43 +17,43 @@ public class Main {
 
         //создаем две таски
         task = new Task("купить", "купить-купить");
-        taskManager.setNewTaskOrSwapInMap(task);
+        taskManager.setNewTask(task);
         task = new Task("найти", "найти-найти");
-        taskManager.setNewTaskOrSwapInMap(task);
+        taskManager.setNewTask(task);
 
         //создаём эпик и 2 субтаски
         epic = new Epic("Поездка", "Поездка-Поездка");
-        taskManager.setNewEpicOrSwapInMap(epic);
+        taskManager.setNewEpic(epic);
         subtask = new Subtask("машина", "машина-машина", epic.getId());
-        taskManager.setNewSubtaskOrSwapInMap(subtask);
+        taskManager.setNewSubtask(subtask);
         subtask = new Subtask("бензин", "бензин-бензин", epic.getId());
-        taskManager.setNewSubtaskOrSwapInMap(subtask);
+        taskManager.setNewSubtask(subtask);
 
         //создаем эпик и субтаску
         epic = new Epic("Прогулка", "Прогулка-Прогулка");
-        taskManager.setNewEpicOrSwapInMap(epic);
+        taskManager.setNewEpic(epic);
         subtask = new Subtask("еда", "еда-еда", epic.getId());
-        taskManager.setNewSubtaskOrSwapInMap(subtask);
+        taskManager.updateSubtaskInMap(subtask);
 
         printInfo();
 
         // создаем новую таску со другим статусом и существующим ID
         task = new Task("Другая", "Другая-Другая");
-        task.setStatus(String.valueOf(ConstantsStatus.IN_PROGRESS));
+        task.setStatus(TaskStatus.IN_PROGRESS);
         task.setId(1);
-        taskManager.setNewTaskOrSwapInMap(task);
+        taskManager.updateTaskInMap(task);
 
         // создаем новую субтаску со другим статусом и существующим ID
         subtask = new Subtask("Другая", "Другая-Другая", 3);
-        subtask.setStatus(String.valueOf(ConstantsStatus.IN_PROGRESS));
+        subtask.setStatus(TaskStatus.IN_PROGRESS);
         subtask.setId(5);
-        taskManager.setNewSubtaskOrSwapInMap(subtask);
+        taskManager.updateSubtaskInMap(subtask);
 
         // создаем новую субтаску со другим статусом и существующим ID
         subtask = new Subtask("Другая", "Другая-Другая", 3);
-        subtask.setStatus(String.valueOf(ConstantsStatus.DONE));
+        subtask.setStatus(TaskStatus.DONE);
         subtask.setId(4);
-        taskManager.setNewSubtaskOrSwapInMap(subtask);
+        taskManager.updateSubtaskInMap(subtask);
 
         printInfo();
 
@@ -62,18 +62,18 @@ public class Main {
         epic.setIdSubtask(4);
         epic.setIdSubtask(5);
         epic.setId(3);
-        taskManager.setNewEpicOrSwapInMap(epic); // я мог бы переписать айдишники субтасок в новый эпик внутри метода из старого, но не знаю как правильно
+        taskManager.updateEpicInMap(epic); // я мог бы переписать айдишники субтасок в новый эпик внутри метода из старого, но не знаю как правильно
 
         // меняем статусы у существующих субтасок с помощю новых с прописанными статусами и айдишниками
         subtask = new Subtask("Свежая", "Свежая-Свежая", 6);
-        subtask.setStatus(String.valueOf(ConstantsStatus.IN_PROGRESS));
+        subtask.setStatus(TaskStatus.IN_PROGRESS);
         subtask.setId(7);
-        taskManager.setNewSubtaskOrSwapInMap(subtask);
+        taskManager.updateSubtaskInMap(subtask);
 
         subtask = new Subtask("Уходящая", "Уходящая-Уходящая", 3);
-        subtask.setStatus(String.valueOf(ConstantsStatus.DONE));
+        subtask.setStatus(TaskStatus.DONE);
         subtask.setId(5);
-        taskManager.setNewSubtaskOrSwapInMap(subtask);
+        taskManager.updateSubtaskInMap(subtask);
 
         printInfo();
 

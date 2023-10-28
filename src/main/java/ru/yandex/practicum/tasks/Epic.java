@@ -1,6 +1,6 @@
 package main.java.ru.yandex.practicum.tasks;
 
-import main.java.ru.yandex.practicum.manager.ConstantsStatus;
+import main.java.ru.yandex.practicum.manager.TaskStatus;
 
 import java.util.ArrayList;
 
@@ -9,7 +9,7 @@ public class Epic extends Task {
 
     public Epic(String name, String description) {
         super(name, description);
-        setStatus(String.valueOf(ConstantsStatus.NEW));
+        setStatus(TaskStatus.NEW);
     }
 
     public ArrayList<Integer> getIdSubtask() {
