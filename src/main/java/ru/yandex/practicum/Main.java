@@ -33,7 +33,7 @@ public class Main {
         epic = new Epic("Прогулка", "Прогулка-Прогулка");
         taskManager.setNewEpic(epic);
         subtask = new Subtask("еда", "еда-еда", epic.getId());
-        taskManager.updateSubtaskInMap(subtask);
+        taskManager.setNewSubtask(subtask);
 
         printInfo();
 
@@ -45,13 +45,13 @@ public class Main {
 
         // создаем новую субтаску со другим статусом и существующим ID
         subtask = new Subtask("Другая", "Другая-Другая", 3);
-        subtask.setStatus(TaskStatus.IN_PROGRESS);
+        subtask.setStatus(TaskStatus.DONE);
         subtask.setId(5);
         taskManager.updateSubtaskInMap(subtask);
 
         // создаем новую субтаску со другим статусом и существующим ID
         subtask = new Subtask("Другая", "Другая-Другая", 3);
-        subtask.setStatus(TaskStatus.DONE);
+        subtask.setStatus(TaskStatus.NEW);
         subtask.setId(4);
         taskManager.updateSubtaskInMap(subtask);
 
@@ -79,9 +79,9 @@ public class Main {
 
         // удаляем эпик и таску
         taskManager.deleteTaskById(2);
-        taskManager.deleteEpicById(3);
+        taskManager.deleteSubtaskById(4);
 
-        printInfo(); //проверяем, что субтаски тоже удалились
+        printInfo(); //проверяем, что статус эпика изменился
 
         taskManager.deleteAllTask();
         taskManager.deleteAllSubtask();
