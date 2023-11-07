@@ -5,8 +5,10 @@ import main.java.ru.yandex.practicum.tasks.Subtask;
 import main.java.ru.yandex.practicum.tasks.Task;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public interface TaskManager {
+    List<Task> getHistory();
 
     Task getTaskById(int id);
 
@@ -17,6 +19,8 @@ public interface TaskManager {
     void setNewTask(Task task);
 
     void updateTaskInMap(Task task);
+
+    void setNewEpic(Epic task);
 
     void updateEpicInMap(Epic task);
 

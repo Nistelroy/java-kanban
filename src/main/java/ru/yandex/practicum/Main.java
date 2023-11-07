@@ -1,19 +1,20 @@
 package main.java.ru.yandex.practicum;
 
+import main.java.ru.yandex.practicum.manager.Managers;
+import main.java.ru.yandex.practicum.manager.TaskManager;
 import main.java.ru.yandex.practicum.manager.TaskStatus;
-import main.java.ru.yandex.practicum.manager.InMemoryTaskManager;
 import main.java.ru.yandex.practicum.tasks.Epic;
 import main.java.ru.yandex.practicum.tasks.Subtask;
 import main.java.ru.yandex.practicum.tasks.Task;
 
 public class Main {
-    static InMemoryTaskManager taskManager;
+    static TaskManager taskManager;
 
     public static void main(String[] args) {
         Task task;
         Epic epic;
         Subtask subtask;
-        taskManager = new InMemoryTaskManager();
+        taskManager = Managers.getDefault();
 
         //создаем две таски
         task = new Task("купить", "купить-купить");
@@ -34,6 +35,35 @@ public class Main {
         taskManager.setNewEpic(epic);
         subtask = new Subtask("еда", "еда-еда", epic.getId());
         taskManager.setNewSubtask(subtask);
+
+        System.out.println("++++++");
+        taskManager.getTaskById(1);
+        taskManager.getTaskById(2);
+        taskManager.getTaskById(1);
+        taskManager.getTaskById(2);
+        taskManager.getTaskById(1);
+        taskManager.getTaskById(2);
+        taskManager.getTaskById(1);
+        taskManager.getTaskById(2);
+        taskManager.getEpicById(3);
+        taskManager.getSubtaskById(4);
+
+
+        for (Task t : taskManager.getHistory()) {
+            System.out.println(t);
+        }
+        System.out.println("++++++");
+        taskManager.getTaskById(2);
+        taskManager.getTaskById(1);
+        taskManager.getTaskById(2);
+        taskManager.getEpicById(3);
+        taskManager.getSubtaskById(4);
+        for (Task t : taskManager.getHistory()) {
+            System.out.println(t);
+        }
+        System.out.println("++++++");
+
+
 
         printInfo();
 
@@ -85,6 +115,7 @@ public class Main {
 
         taskManager.deleteAllTask();
         taskManager.deleteAllSubtask();
+
 
         printInfo(); //проверяем, что статус эпика изменился
     }
