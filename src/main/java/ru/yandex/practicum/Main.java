@@ -1,19 +1,19 @@
 package main.java.ru.yandex.practicum;
 
 import main.java.ru.yandex.practicum.manager.TaskStatus;
-import main.java.ru.yandex.practicum.manager.TaskManager;
+import main.java.ru.yandex.practicum.manager.InMemoryTaskManager;
 import main.java.ru.yandex.practicum.tasks.Epic;
 import main.java.ru.yandex.practicum.tasks.Subtask;
 import main.java.ru.yandex.practicum.tasks.Task;
 
 public class Main {
-    static TaskManager taskManager;
+    static InMemoryTaskManager taskManager;
 
     public static void main(String[] args) {
         Task task;
         Epic epic;
         Subtask subtask;
-        taskManager = new TaskManager();
+        taskManager = new InMemoryTaskManager();
 
         //создаем две таски
         task = new Task("купить", "купить-купить");
@@ -42,20 +42,6 @@ public class Main {
         task.setStatus(TaskStatus.IN_PROGRESS);
         task.setId(1);
         taskManager.updateTaskInMap(task);
-
-        /*
-        Если ты это делаешь для тестирования, то достаточно просто поменять поля уже созданной раньше задачи сеттерами и обновить ее, например
-        Task task = new Task(....);
-        добавляем задачу
-        taskManager.addTask(task);
-        изменяем любое поле, например
-        task.setStatus(Status.DONE); //делаем задачу выполненной к примеру
-
-        task всё ещё ссылается на объект внутри мапы и я поменяю статус в ней, зачем тогда вызывать метод апдейт?
-        Я подумал, что нарушается принцип инкапсуляции и специально создал новый объект для замены
-
-        taskManager.updateTask(task); //заменяем на обновленную задачу
-        */
 
         // создаем новую субтаску со другим статусом и существующим ID
         subtask = new Subtask("Другая", "Другая-Другая", 3);
