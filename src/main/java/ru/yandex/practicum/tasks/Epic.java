@@ -1,6 +1,6 @@
 package main.java.ru.yandex.practicum.tasks;
 
-import main.java.ru.yandex.practicum.manager.TaskStatus;
+import main.java.ru.yandex.practicum.managers.TaskStatus;
 
 import java.util.ArrayList;
 

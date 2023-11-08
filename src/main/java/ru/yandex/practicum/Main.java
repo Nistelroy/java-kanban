@@ -1,8 +1,7 @@
 package main.java.ru.yandex.practicum;
 
-import main.java.ru.yandex.practicum.manager.Managers;
-import main.java.ru.yandex.practicum.manager.TaskManager;
-import main.java.ru.yandex.practicum.manager.TaskStatus;
+import main.java.ru.yandex.practicum.managers.Managers;
+import main.java.ru.yandex.practicum.managers.TaskManager;
 import main.java.ru.yandex.practicum.tasks.Epic;
 import main.java.ru.yandex.practicum.tasks.Subtask;
 import main.java.ru.yandex.practicum.tasks.Task;
@@ -30,13 +29,7 @@ public class Main {
         subtask = new Subtask("бензин", "бензин-бензин", epic.getId());
         taskManager.setNewSubtask(subtask);
 
-        //создаем эпик и субтаску
-        epic = new Epic("Прогулка", "Прогулка-Прогулка");
-        taskManager.setNewEpic(epic);
-        subtask = new Subtask("еда", "еда-еда", epic.getId());
-        taskManager.setNewSubtask(subtask);
-
-        System.out.println("++++++");
+        //делаем 10 запросов
         taskManager.getTaskById(1);
         taskManager.getTaskById(2);
         taskManager.getTaskById(1);
@@ -48,80 +41,24 @@ public class Main {
         taskManager.getEpicById(3);
         taskManager.getSubtaskById(4);
 
+        //проверяем историю
+        printHistory();
 
-        for (Task t : taskManager.getHistory()) {
-            System.out.println(t);
-        }
-        System.out.println("++++++");
+        //делаем ещё 5 запросов
         taskManager.getTaskById(2);
         taskManager.getTaskById(1);
         taskManager.getTaskById(2);
         taskManager.getEpicById(3);
         taskManager.getSubtaskById(4);
-        for (Task t : taskManager.getHistory()) {
-            System.out.println(t);
-        }
-        System.out.println("++++++");
 
-
-
-        printInfo();
-
-        // создаем новую таску со другим статусом и существующим ID
-        task = new Task("Другая", "Другая-Другая");
-        task.setStatus(TaskStatus.IN_PROGRESS);
-        task.setId(1);
-        taskManager.updateTaskInMap(task);
-
-        // создаем новую субтаску со другим статусом и существующим ID
-        subtask = new Subtask("Другая", "Другая-Другая", 3);
-        subtask.setStatus(TaskStatus.DONE);
-        subtask.setId(5);
-        taskManager.updateSubtaskInMap(subtask);
-
-        // создаем новую субтаску со другим статусом и существующим ID
-        subtask = new Subtask("Другая", "Другая-Другая", 3);
-        subtask.setStatus(TaskStatus.NEW);
-        subtask.setId(4);
-        taskManager.updateSubtaskInMap(subtask);
-
-        printInfo();
-
-        // создаем новый эпик и прописываем ему существующий айди и айдишники субтасок
-        epic = new Epic("Новая", "Новая-Новая");
-        epic.setIdSubtask(4);
-        epic.setIdSubtask(5);
-        epic.setId(3);
-        taskManager.updateEpicInMap(epic);
-
-        // меняем статусы у существующих субтасок с помощю новых с прописанными статусами и айдишниками
-        subtask = new Subtask("Свежая", "Свежая-Свежая", 6);
-        subtask.setStatus(TaskStatus.IN_PROGRESS);
-        subtask.setId(7);
-        taskManager.updateSubtaskInMap(subtask);
-
-        subtask = new Subtask("Уходящая", "Уходящая-Уходящая", 3);
-        subtask.setStatus(TaskStatus.DONE);
-        subtask.setId(5);
-        taskManager.updateSubtaskInMap(subtask);
-
-        printInfo();
-
-        // удаляем эпик и таску
-        taskManager.deleteTaskById(2);
-        taskManager.deleteSubtaskById(4);
-
-        printInfo(); //проверяем, что статус эпика изменился
-
-        taskManager.deleteAllTask();
-        taskManager.deleteAllSubtask();
-
-
-        printInfo(); //проверяем, что статус эпика изменился
+        //проверяем, что старые удалились, а новые запросы добавились в конец списка
+        printHistory();
     }
 
-    public static void printInfo() {
-        System.out.println(taskManager.getAllTask() + "\n" + taskManager.getAllEpic()
-                + "\n" + taskManager.getAllSubtask() + "\n");
+    private static void printHistory() {
+        for (Task t : taskManager.getHistory()) {
+            System.out.println(t);
+        }
+        System.out.println();
     }
 }

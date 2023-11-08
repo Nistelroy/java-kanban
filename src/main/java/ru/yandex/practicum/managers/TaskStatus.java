@@ -1,4 +1,4 @@
-package main.java.ru.yandex.practicum.manager;
+package main.java.ru.yandex.practicum.managers;
 
 public enum TaskStatus {
     NEW,

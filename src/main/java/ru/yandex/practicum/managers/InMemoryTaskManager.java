@@ -1,13 +1,11 @@
-package main.java.ru.yandex.practicum.manager;
+package main.java.ru.yandex.practicum.managers;
 
 import main.java.ru.yandex.practicum.tasks.Epic;
 import main.java.ru.yandex.practicum.tasks.Subtask;
 import main.java.ru.yandex.practicum.tasks.Task;
 
-
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 
 public class InMemoryTaskManager implements TaskManager {
@@ -15,29 +13,28 @@ public class InMemoryTaskManager implements TaskManager {
     private final HashMap<Integer, Task> tasksMap = new HashMap<>();
     private final HashMap<Integer, Epic> epicMap = new HashMap<>();
     private final HashMap<Integer, Subtask> subtasksMap = new HashMap<>();
-
-    private final List<Task> historyList = new LinkedList<>();
+    private final HistoryManager historyManager = Managers.getDefaultHistory();
 
     @Override
     public List<Task> getHistory() {
-        return historyList;
+        return historyManager.getHistory();
     }
 
     @Override
     public Task getTaskById(int id) {
-        addTaskInHistory(tasksMap.get(id));
+        historyManager.add(tasksMap.get(id));
         return tasksMap.get(id);
     }
 
     @Override
     public Epic getEpicById(int id) {
-        addTaskInHistory(epicMap.get(id));
+        historyManager.add(epicMap.get(id));
         return epicMap.get(id);
     }
 
     @Override
     public Subtask getSubtaskById(int id) {
-        addTaskInHistory(subtasksMap.get(id));
+        historyManager.add(subtasksMap.get(id));
         return subtasksMap.get(id);
     }
 
@@ -112,13 +109,6 @@ public class InMemoryTaskManager implements TaskManager {
             }
         }
         return allSubtaskByEpic;
-    }
-
-    private void addTaskInHistory(Task task) {
-        if (historyList.size() == 10){
-            historyList.remove(0);
-        }
-        historyList.add(task);
     }
 
     private int createId() {
