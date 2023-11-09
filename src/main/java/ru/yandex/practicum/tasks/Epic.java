@@ -1,7 +1,5 @@
 package main.java.ru.yandex.practicum.tasks;
 
-import main.java.ru.yandex.practicum.managers.TaskStatus;
-
 import java.util.ArrayList;
 
 public class Epic extends Task {
@@ -10,6 +8,11 @@ public class Epic extends Task {
     public Epic(String name, String description) {
         super(name, description);
         setStatus(TaskStatus.NEW);
+    }
+
+    public Epic(String name, String description, int id, TaskStatus status, ArrayList<Integer> idSubtask) {
+        super(name, description, id, status);
+        this.idSubtask = idSubtask;
     }
 
     public ArrayList<Integer> getIdSubtask() {

@@ -3,39 +3,59 @@ package main.java.ru.yandex.practicum.managers;
 import main.java.ru.yandex.practicum.tasks.Epic;
 import main.java.ru.yandex.practicum.tasks.Subtask;
 import main.java.ru.yandex.practicum.tasks.Task;
+import main.java.ru.yandex.practicum.tasks.TaskStatus;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class InMemoryTaskManager implements TaskManager {
     private int idForNewTask;
-    private final HashMap<Integer, Task> tasksMap = new HashMap<>();
-    private final HashMap<Integer, Epic> epicMap = new HashMap<>();
-    private final HashMap<Integer, Subtask> subtasksMap = new HashMap<>();
+    private final Map<Integer, Task> tasksMap = new HashMap<>();
+    private final Map<Integer, Epic> epicMap = new HashMap<>();
+    private final Map<Integer, Subtask> subtasksMap = new HashMap<>();
     private final HistoryManager historyManager = Managers.getDefaultHistory();
 
     @Override
     public List<Task> getHistory() {
-        return historyManager.getHistory();
+        List<Task> historyCopy = new ArrayList<>();
+        for (Task task : historyManager.getHistory()) {
+            if (task.getClass().equals(Task.class)) {
+                Task taskCopy = new Task(task.getName(), task.getDescription(), task.getId(), task.getStatus());
+                historyCopy.add(taskCopy);
+            } else if (task.getClass().equals(Epic.class)) {
+                Epic taskCopy = new Epic(task.getName(), task.getDescription(), task.getId(), task.getStatus(),
+                        ((Epic) task).getIdSubtask());
+                historyCopy.add(taskCopy);
+            } else if (task.getClass().equals(Subtask.class)) {
+                Subtask taskCopy = new Subtask(task.getName(), task.getDescription(), task.getId(),
+                        task.getStatus(), ((Subtask) task).getIdEpic());
+                historyCopy.add(taskCopy);
+            }
+        }
+        return historyCopy;  // cначала хотел сделать List.copyOf, но он всё равно давал ссылки на таски в мапе, пошёл по дорогому пути создания полной копии)
     }
 
     @Override
     public Task getTaskById(int id) {
-        historyManager.add(tasksMap.get(id));
-        return tasksMap.get(id);
+        Task task = tasksMap.get(id);
+        historyManager.add(task);
+        return task;
     }
 
     @Override
     public Epic getEpicById(int id) {
-        historyManager.add(epicMap.get(id));
-        return epicMap.get(id);
+        Epic epic = epicMap.get(id);
+        historyManager.add(epic);
+        return epic;
     }
 
     @Override
     public Subtask getSubtaskById(int id) {
-        historyManager.add(subtasksMap.get(id));
-        return subtasksMap.get(id);
+        Subtask subtask = subtasksMap.get(id);
+        historyManager.add(subtask);
+        return subtask;
     }
 
     @Override
@@ -100,8 +120,8 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public ArrayList<Subtask> getAllSubtaskFromEpicById(Integer id) {
-        ArrayList<Subtask> allSubtaskByEpic = new ArrayList<>();
+    public List<Subtask> getAllSubtaskFromEpicById(Integer id) {
+        List<Subtask> allSubtaskByEpic = new ArrayList<>();
         if (epicMap.containsKey(id)) {
             Epic thisEpic = epicMap.get(id);
             for (Integer subtaskId : thisEpic.getIdSubtask()) {
@@ -116,17 +136,17 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public ArrayList<Task> getAllTask() {
+    public List<Task> getAllTask() {
         return new ArrayList<>(tasksMap.values());
     }
 
     @Override
-    public ArrayList<Epic> getAllEpic() {
+    public List<Epic> getAllEpic() {
         return new ArrayList<>(epicMap.values());
     }
 
     @Override
-    public ArrayList<Subtask> getAllSubtask() {
+    public List<Subtask> getAllSubtask() {
         return new ArrayList<>(subtasksMap.values());
     }
 
@@ -151,13 +171,13 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     private void statusEpicChanger(Epic task) {
-        ArrayList<Integer> allSubtaskId = task.getIdSubtask();
+        List<Integer> allSubtaskId = task.getIdSubtask();
         if (allSubtaskId.isEmpty()) {
             task.setStatus(TaskStatus.NEW);
         } else if (allSubtaskId.size() == 1) {
             task.setStatus(subtasksMap.get(allSubtaskId.get(0)).getStatus());
         } else {
-            ArrayList<TaskStatus> allSubtaskStatusByEpic = new ArrayList<>(allSubtaskId.size());
+            List<TaskStatus> allSubtaskStatusByEpic = new ArrayList<>(allSubtaskId.size());
             for (Integer integer : allSubtaskId) {
                 allSubtaskStatusByEpic.add(subtasksMap.get(integer).getStatus());
             }

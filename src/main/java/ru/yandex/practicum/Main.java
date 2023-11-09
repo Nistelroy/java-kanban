@@ -44,6 +44,9 @@ public class Main {
         //проверяем историю
         printHistory();
 
+        //запрос несуществующей таски
+        taskManager.getTaskById(21);
+
         //делаем ещё 5 запросов
         taskManager.getTaskById(2);
         taskManager.getTaskById(1);

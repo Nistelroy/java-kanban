@@ -1,7 +1,5 @@
 package main.java.ru.yandex.practicum.tasks;
 
-import main.java.ru.yandex.practicum.managers.TaskStatus;
-
 public class Task {
     private String name;
     private String description;
@@ -12,6 +10,13 @@ public class Task {
         this.name = name;
         this.description = description;
         this.status = TaskStatus.NEW;
+    }
+
+    public Task(String name, String description, int id, TaskStatus status) {
+        this.name = name;
+        this.description = description;
+        this.id = id;
+        this.status = status;
     }
 
     public void setName(String name) {

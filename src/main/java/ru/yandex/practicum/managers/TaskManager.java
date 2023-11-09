@@ -34,13 +34,13 @@ public interface TaskManager {
 
     void deleteSubtaskById(Integer id);
 
-    ArrayList<Subtask> getAllSubtaskFromEpicById(Integer id);
+    List<Subtask> getAllSubtaskFromEpicById(Integer id);
 
-    ArrayList<Task> getAllTask();
+    List<Task> getAllTask();
 
-    ArrayList<Epic> getAllEpic();
+    List<Epic> getAllEpic();
 
-    ArrayList<Subtask> getAllSubtask();
+    List<Subtask> getAllSubtask();
 
     void deleteAllTask();
 
