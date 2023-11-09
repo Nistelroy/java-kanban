@@ -19,22 +19,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public List<Task> getHistory() {
-        List<Task> historyCopy = new ArrayList<>();
-        for (Task task : historyManager.getHistory()) {
-            if (task.getClass().equals(Task.class)) {
-                Task taskCopy = new Task(task.getName(), task.getDescription(), task.getId(), task.getStatus());
-                historyCopy.add(taskCopy);
-            } else if (task.getClass().equals(Epic.class)) {
-                Epic taskCopy = new Epic(task.getName(), task.getDescription(), task.getId(), task.getStatus(),
-                        ((Epic) task).getIdSubtask());
-                historyCopy.add(taskCopy);
-            } else if (task.getClass().equals(Subtask.class)) {
-                Subtask taskCopy = new Subtask(task.getName(), task.getDescription(), task.getId(),
-                        task.getStatus(), ((Subtask) task).getIdEpic());
-                historyCopy.add(taskCopy);
-            }
-        }
-        return historyCopy;  // cначала хотел сделать List.copyOf, но он всё равно давал ссылки на таски в мапе, пошёл по дорогому пути создания полной копии)
+        return historyManager.getHistory();  // cначала хотел сделать List.copyOf, но он всё равно давал ссылки на таски в мапе, пошёл по дорогому пути создания полной копии)
     }
 
     @Override
