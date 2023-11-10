@@ -12,10 +12,19 @@ import java.util.Map;
 
 public class InMemoryTaskManager implements TaskManager {
     private int idForNewTask;
-    private final Map<Integer, Task> tasksMap = new HashMap<>();
-    private final Map<Integer, Epic> epicMap = new HashMap<>();
-    private final Map<Integer, Subtask> subtasksMap = new HashMap<>();
+    private Map<Integer, Task> tasksMap = new HashMap<>();
+    private Map<Integer, Epic> epicMap = new HashMap<>();
+    private Map<Integer, Subtask> subtasksMap = new HashMap<>();
     private final HistoryManager historyManager = Managers.getDefaultHistory();
+
+    public InMemoryTaskManager() {
+    }
+
+    protected InMemoryTaskManager(Map<Integer, Task> tasksMap, Map<Integer, Epic> epicMap, Map<Integer, Subtask> subtasksMap) {
+        this.tasksMap = tasksMap;
+        this.epicMap = epicMap;
+        this.subtasksMap = subtasksMap;
+    }
 
     @Override
     public List<Task> getHistory() {

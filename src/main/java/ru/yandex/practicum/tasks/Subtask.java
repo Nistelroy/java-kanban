@@ -1,5 +1,7 @@
 package main.java.ru.yandex.practicum.tasks;
 
+import java.util.Objects;
+
 public class Subtask extends Task {
     private final int idEpic;
 
@@ -30,5 +32,19 @@ public class Subtask extends Task {
                 ", status='" + getStatus() + '\'' +
                 ", idEpic=" + idEpic + '\'' +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        Subtask subtask = (Subtask) o;
+        return idEpic == subtask.idEpic;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), idEpic);
     }
 }
