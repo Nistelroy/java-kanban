@@ -2,6 +2,7 @@ package main.java.ru.yandex.practicum.managers;
 
 import main.java.ru.yandex.practicum.tasks.Task;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -21,6 +22,6 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     @Override
     public List<Task> getHistory() {
-        return new LinkedList<>(historyList);
+        return new ArrayList<>(historyList);
     }
 }
