@@ -8,5 +8,6 @@ import main.java.ru.yandex.practicum.tasks.Task;
 
 public class Main {
     public static void main(String[] args) {
+        // если совсем кринж то можно откатить на пару коммитов, там есть готовый вариант под ревью :)
     }
 }
