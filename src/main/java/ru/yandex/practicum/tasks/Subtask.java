@@ -8,11 +8,6 @@ public class Subtask extends Task {
         this.idEpic = idEpic;
     }
 
-    public Subtask(String name, String description, int id, TaskStatus status, int idEpic) {
-        super(name, description, id, status);
-        this.idEpic = idEpic;
-    }
-
     public int getIdEpic() {
         return idEpic;
     }
