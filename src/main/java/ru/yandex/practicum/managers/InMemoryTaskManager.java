@@ -86,14 +86,20 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void deleteTaskById(Integer id) {
         tasksMap.remove(id);
+        historyManager.remove(id);
     }
 
     @Override
     public void deleteEpicById(Integer id) {
-        for (int i = 0; i < epicMap.get(id).getIdSubtask().size(); i++) {
-            subtasksMap.remove(epicMap.get(id).getIdSubtask().get(i));
+        List <Integer> idSubtask = epicMap.get(id).getIdSubtask();
+        for (int i = 0; i < idSubtask.size(); i++) {
+            subtasksMap.remove(idSubtask.get(i));
+        }
+        for (int i = 0; i < idSubtask.size(); i++) {
+            historyManager.remove(idSubtask.get(i));
         }
         epicMap.remove(id);
+        historyManager.remove(id);
     }
 
     @Override
@@ -102,6 +108,7 @@ public class InMemoryTaskManager implements TaskManager {
         epicMap.get(epicId).removeEpicSubtasksById(id);
         subtasksMap.remove(id);
         statusEpicChanger(epicMap.get(epicId));
+        historyManager.remove(id);
     }
 
     @Override
@@ -138,12 +145,22 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void deleteAllTask() {
         tasksMap.clear();
+        for (Task task : historyManager.getHistory()){
+            if (task.getClass().equals(Task.class)) {
+                historyManager.remove(task.getId());
+            }
+        }
     }
 
     @Override
     public void deleteAllEpic() {
         epicMap.clear();
         subtasksMap.clear();
+        for (Task task : historyManager.getHistory()){
+            if (task.getClass().equals(Epic.class) || task.getClass().equals(Subtask.class)) {
+                historyManager.remove(task.getId());
+            }
+        }
     }
 
     @Override
@@ -153,6 +170,12 @@ public class InMemoryTaskManager implements TaskManager {
             thisEpic.setStatus(TaskStatus.NEW);
         }
         subtasksMap.clear();
+
+        for (Task task : historyManager.getHistory()){
+            if (task.getClass().equals(Subtask.class)) {
+                historyManager.remove(task.getId());
+            }
+        }
     }
 
     private void statusEpicChanger(Epic task) {
