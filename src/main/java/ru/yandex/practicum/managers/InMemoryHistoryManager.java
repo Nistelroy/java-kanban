@@ -55,7 +55,7 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     private void removeNode(Node node) {
         if (node != null) {
-            if (historyMap.size() == 1) {
+            if ((historyMap.size() == 1) && (historyMap.containsKey(node.task.getId()))) {
                 historyMap.clear();
                 lastNode = null;
                 node.prev = null;
