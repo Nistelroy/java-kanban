@@ -63,7 +63,7 @@ public class Main {
         taskManager.getSubtaskById(5);
         taskManager.getSubtaskById(6);
         taskManager.getEpicById(7);
-       //проверяем, что порядок изменился
+        //проверяем, что порядок изменился
         printHistory();
 
         //удаляем таску
@@ -84,7 +84,6 @@ public class Main {
 
         //получаем нулл
         printHistory();
-
     }
 
     private static void printHistory() {

@@ -2,18 +2,23 @@ package main.java.ru.yandex.practicum.managers;
 
 import main.java.ru.yandex.practicum.tasks.Task;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 
 public class InMemoryHistoryManager implements HistoryManager {
     private Node lastNode;
+    private Node firstNode;
     private final Map<Integer, Node> historyMap = new HashMap<>();
 
     @Override
     public void add(Task task) {
         if (task != null) {
-            if (historyMap.get(task.getId()) != null) {
-                removeNode(historyMap.get(task.getId()));
-                historyMap.remove(task.getId());
+            Node node = historyMap.remove(task.getId());
+            if (node != null) {
+                removeNode(node);
             }
             linkLast(task);
         }
@@ -31,16 +36,14 @@ public class InMemoryHistoryManager implements HistoryManager {
     }
 
     private void linkLast(Task task) {
+        Node node = new Node(lastNode, task, null);
         if (lastNode == null) {
-            Node node = new Node(null, task, null);
-            historyMap.put(task.getId(), node);
-            lastNode = node;
+            firstNode = node;
         } else {
-            Node node = new Node(lastNode, task, null);
             lastNode.next = node;
-            lastNode = node;
-            historyMap.put(task.getId(), node);
         }
+        lastNode = node;
+        historyMap.put(task.getId(), node);
     }
 
     private List<Task> getTasks() {
@@ -55,24 +58,37 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     private void removeNode(Node node) {
         if (node != null) {
-            if ((historyMap.size() == 1) && (historyMap.containsKey(node.task.getId()))) {
-                historyMap.clear();
+            if (node.prev == null && node.next == null) {
                 lastNode = null;
-                node.prev = null;
-                node.next = null;
+                firstNode = null;
                 return;
             }
-
             Node leftNode = node.prev;
             Node rightNode = node.next;
             if (leftNode != null) {
                 leftNode.next = rightNode;
+                if (leftNode.prev == null) {
+                    firstNode = leftNode;
+                }
             }
             if (rightNode != null) {
                 rightNode.prev = leftNode;
+                if (rightNode.next == null) {
+                    lastNode = rightNode;
+                }
             }
-            node.prev = null;
-            node.next = null;
         }
+    }
+}
+
+class Node {
+    public Task task;
+    public Node next;
+    public Node prev;
+
+    public Node(Node prev, Task task, Node next) {
+        this.task = task;
+        this.next = next;
+        this.prev = prev;
     }
 }
