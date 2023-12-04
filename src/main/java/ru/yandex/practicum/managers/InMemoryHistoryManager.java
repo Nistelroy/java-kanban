@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
 public class InMemoryHistoryManager implements HistoryManager {
     private Node lastNode;
     private Node firstNode;
@@ -16,10 +15,9 @@ public class InMemoryHistoryManager implements HistoryManager {
     @Override
     public void add(Task task) {
         if (task != null) {
-            Node node = historyMap.remove(task.getId());
-            if (node != null) {
-                removeNode(node);
-            }
+//            Node node = historyMap.remove(task.getId()); не совсем понял как перенести его в removeNode, если для вызова removeNode нужна node
+//            removeNode(node);
+            remove(task.getId());
             linkLast(task);
         }
     }
