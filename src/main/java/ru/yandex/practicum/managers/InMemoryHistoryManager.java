@@ -15,8 +15,6 @@ public class InMemoryHistoryManager implements HistoryManager {
     @Override
     public void add(Task task) {
         if (task != null) {
-//            Node node = historyMap.remove(task.getId()); не совсем понял как перенести его в removeNode, если для вызова removeNode нужна node
-//            removeNode(node);
             remove(task.getId());
             linkLast(task);
         }
@@ -24,8 +22,8 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     @Override
     public void remove(int id) {
-        removeNode(historyMap.get(id));
-        historyMap.remove(id);
+        Node node = historyMap.remove(id);
+        removeNode(node);
     }
 
     @Override
