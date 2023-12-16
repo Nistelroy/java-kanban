@@ -1,5 +1,6 @@
-package main.java.ru.yandex.practicum.managers;
+package main.java.ru.yandex.practicum.managers.memory;
 
+import main.java.ru.yandex.practicum.managers.HistoryManager;
 import main.java.ru.yandex.practicum.tasks.Task;
 
 import java.util.ArrayList;

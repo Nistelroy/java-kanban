@@ -1,5 +1,8 @@
-package main.java.ru.yandex.practicum.managers;
+package main.java.ru.yandex.practicum.managers.disc;
 
+import main.java.ru.yandex.practicum.managers.TaskManager;
+import main.java.ru.yandex.practicum.managers.memory.InMemoryHistoryManager;
+import main.java.ru.yandex.practicum.managers.memory.InMemoryTaskManager;
 import main.java.ru.yandex.practicum.tasks.Epic;
 import main.java.ru.yandex.practicum.tasks.Subtask;
 import main.java.ru.yandex.practicum.tasks.Task;
@@ -44,6 +47,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
         }
 
         buffer.append(System.lineSeparator());
+
         buffer.append(historyToString(super.getHistory()));
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(file.toFile()))) {
@@ -56,7 +60,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
     private String taskToString(Task task) {
         String[] reSplit = new String[5];
         reSplit[0] = String.valueOf(task.getId());
-        reSplit[1] = String.valueOf(task.getClass());
+        reSplit[1] = String.valueOf(TaskType.TASK);
         reSplit[2] = task.getName();
         reSplit[3] = String.valueOf(task.getStatus());
         reSplit[4] = task.getDescription();
@@ -66,13 +70,12 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
     }
 
     private String epicToString(Epic epic) {
-        String[] reSplit = new String[6];
+        String[] reSplit = new String[5];
         reSplit[0] = String.valueOf(epic.getId());
-        reSplit[1] = String.valueOf(epic.getClass());
+        reSplit[1] = String.valueOf(TaskType.EPIC);
         reSplit[2] = epic.getName();
         reSplit[3] = String.valueOf(epic.getStatus());
         reSplit[4] = epic.getDescription();
-        reSplit[5] = String.valueOf(epic.getIdSubtask());
 
         return String.join(",", reSplit);
     }
@@ -80,7 +83,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
     private String subtaskToString(Subtask subtask) {
         String[] reSplit = new String[6];
         reSplit[0] = String.valueOf(subtask.getId());
-        reSplit[1] = String.valueOf(subtask.getClass());
+        reSplit[1] = String.valueOf(TaskType.SUBTASK);
         reSplit[2] = subtask.getName();
         reSplit[3] = String.valueOf(subtask.getStatus());
         reSplit[4] = subtask.getDescription();
@@ -120,7 +123,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
     private static String historyToString(List<Task> history) {
         StringBuilder result = new StringBuilder();
         for (int i = 0; i < history.size(); i++) {
-            result.append(history.get(i));
+            result.append(history.get(i).getId());
             if (i < history.size() - 1) {
                 result.append(",");
             }

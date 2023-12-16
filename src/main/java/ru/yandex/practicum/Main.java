@@ -13,7 +13,7 @@ public class Main {
         Task task;
         Epic epic;
         Subtask subtask;
-        taskManager = Managers.getDefault();
+        taskManager = Managers.getFileManager();
 
         //создаем две таски
         task = new Task("купить", "купить-купить");
@@ -50,7 +50,7 @@ public class Main {
 
         //проверяем историю (5 уникальных)
         printHistory();
-
+  /*
         //запрос несуществующей таски
         taskManager.getTaskById(21);
 
@@ -64,9 +64,9 @@ public class Main {
         taskManager.getSubtaskById(6);
         taskManager.getEpicById(7);
         //проверяем, что порядок изменился
-        printHistory();
+       printHistory();
 
-        //удаляем таску
+     //удаляем таску
         taskManager.deleteTaskById(2);
 
         //таска исчезла из истории
@@ -83,7 +83,7 @@ public class Main {
         taskManager.deleteAllEpic();
 
         //получаем нулл
-        printHistory();
+        printHistory();*/
     }
 
     private static void printHistory() {

@@ -1,4 +1,4 @@
-package main.java.ru.yandex.practicum.managers;
+package main.java.ru.yandex.practicum.managers.disc;
 
 import main.java.ru.yandex.practicum.tasks.*;
 

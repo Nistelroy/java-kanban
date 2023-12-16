@@ -1,5 +1,8 @@
-package main.java.ru.yandex.practicum.managers;
+package main.java.ru.yandex.practicum.managers.memory;
 
+import main.java.ru.yandex.practicum.managers.HistoryManager;
+import main.java.ru.yandex.practicum.managers.TaskManager;
+import main.java.ru.yandex.practicum.managers.memory.InMemoryHistoryManager;
 import main.java.ru.yandex.practicum.tasks.Epic;
 import main.java.ru.yandex.practicum.tasks.Subtask;
 import main.java.ru.yandex.practicum.tasks.Task;
