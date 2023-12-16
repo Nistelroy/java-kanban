@@ -49,10 +49,13 @@ public class Main {
         taskManager.getEpicById(7);
 
         //проверяем историю (5 уникальных)
-        printHistory();
-  /*
-        //запрос несуществующей таски
-        taskManager.getTaskById(21);
+        printHistory(taskManager);
+
+        //создаём новый менеджер из сохранённого файла
+        TaskManager taskManagerTwo = Managers.getFileManagerLoadFromFile();
+
+        //печатаем его историю, сравниваем с предыдущей
+        printHistory(taskManagerTwo);
 
         //делаем ещё запросы
         taskManager.getTaskById(2);
@@ -63,30 +66,18 @@ public class Main {
         taskManager.getSubtaskById(5);
         taskManager.getSubtaskById(6);
         taskManager.getEpicById(7);
+
         //проверяем, что порядок изменился
-       printHistory();
+        printHistory(taskManager);
 
-     //удаляем таску
-        taskManager.deleteTaskById(2);
+        //снова создаём из бекапа
+        taskManagerTwo = Managers.getFileManagerLoadFromFile();
 
-        //таска исчезла из истории
-        printHistory();
-
-        //удаляем эпик с 3 подзадачами
-        taskManager.deleteEpicById(3);
-
-        //эпик и 3 субстаски исчезли из истории
-        printHistory();
-
-        //чистим всё
-        taskManager.deleteAllTask();
-        taskManager.deleteAllEpic();
-
-        //получаем нулл
-        printHistory();*/
+        //результат опять совпадает
+        printHistory(taskManagerTwo);
     }
 
-    private static void printHistory() {
+    private static void printHistory(TaskManager taskManager) {
         if (!(taskManager.getHistory().isEmpty())) {
             for (Task t : taskManager.getHistory()) {
                 System.out.println(t);

@@ -8,7 +8,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class Managers {
-
     private static final Path file = Paths.get("src/main/resources/data.csv");
 
     private Managers() {
@@ -26,5 +25,9 @@ public class Managers {
         return new FileBackedTasksManager(new InMemoryHistoryManager(), file);
     }
 
-
+    public static FileBackedTasksManager getFileManagerLoadFromFile() {
+        FileBackedTasksManager fileBackedTasksManager = new FileBackedTasksManager(new InMemoryHistoryManager(), file);
+        fileBackedTasksManager.loadFromFile(file);
+        return fileBackedTasksManager;
+    }
 }
