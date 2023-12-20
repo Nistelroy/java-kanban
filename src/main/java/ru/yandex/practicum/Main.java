@@ -2,18 +2,24 @@ package main.java.ru.yandex.practicum;
 
 import main.java.ru.yandex.practicum.managers.Managers;
 import main.java.ru.yandex.practicum.managers.TaskManager;
+import main.java.ru.yandex.practicum.managers.file.FileBackedTasksManager;
 import main.java.ru.yandex.practicum.tasks.Epic;
 import main.java.ru.yandex.practicum.tasks.Subtask;
 import main.java.ru.yandex.practicum.tasks.Task;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 public class Main {
     static TaskManager taskManager;
+    private static final Path file = Paths.get("src/main/resources/data.csv");
 
     public static void main(String[] args) {
+
         Task task;
         Epic epic;
         Subtask subtask;
-        taskManager = Managers.getFileManager();
+        taskManager = Managers.getDefault(file);
 
         //создаем две таски
         task = new Task("купить", "купить-купить");
@@ -35,13 +41,7 @@ public class Main {
         epic = new Epic("Полёт", "Полёт-Полёт");
         taskManager.setNewEpic(epic);
 
-        //делаем 10 запросов
-        taskManager.getTaskById(1);
-        taskManager.getTaskById(2);
-        taskManager.getTaskById(1);
-        taskManager.getTaskById(2);
-        taskManager.getTaskById(1);
-        taskManager.getTaskById(2);
+
         taskManager.getTaskById(1);
         taskManager.getTaskById(2);
         taskManager.getEpicById(3);
@@ -52,29 +52,37 @@ public class Main {
         printHistory(taskManager);
 
         //создаём новый менеджер из сохранённого файла
-        TaskManager taskManagerTwo = Managers.getFileManagerLoadFromFile();
+        FileBackedTasksManager fileBackedManager = FileBackedTasksManager.loadFromFile(file);
 
         //печатаем его историю, сравниваем с предыдущей
-        printHistory(taskManagerTwo);
+        printHistory(fileBackedManager);
 
-        //делаем ещё запросы
-        taskManager.getTaskById(2);
-        taskManager.getTaskById(1);
-        taskManager.getTaskById(2);
-        taskManager.getEpicById(3);
+        //делаем запрос такски, которая уже была в истории
         taskManager.getSubtaskById(4);
-        taskManager.getSubtaskById(5);
-        taskManager.getSubtaskById(6);
-        taskManager.getEpicById(7);
 
-        //проверяем, что порядок изменился
+        //старый запрос удалился, она снова на верху списка
         printHistory(taskManager);
 
         //снова создаём из бекапа
-        taskManagerTwo = Managers.getFileManagerLoadFromFile();
+        fileBackedManager = FileBackedTasksManager.loadFromFile(file);
 
         //результат опять совпадает
-        printHistory(taskManagerTwo);
+        printHistory(fileBackedManager);
+
+        //меняем таску, удаляем эпик
+        task.setName("Дорого");
+        taskManager.updateTaskInMap(task);
+        taskManager.deleteEpicById(3);
+
+        //старый запрос удалился, она снова на верху списка
+        printHistory(taskManager);
+
+        //снова создаём из бекапа
+        fileBackedManager = FileBackedTasksManager.loadFromFile(file);
+
+        //результат опять совпадает
+        printHistory(fileBackedManager);
+
     }
 
     private static void printHistory(TaskManager taskManager) {

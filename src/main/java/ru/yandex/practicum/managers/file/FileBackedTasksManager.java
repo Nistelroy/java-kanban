@@ -1,4 +1,4 @@
-package main.java.ru.yandex.practicum.managers.disc;
+package main.java.ru.yandex.practicum.managers.file;
 
 import main.java.ru.yandex.practicum.managers.TaskManager;
 import main.java.ru.yandex.practicum.managers.memory.InMemoryHistoryManager;
@@ -6,7 +6,7 @@ import main.java.ru.yandex.practicum.managers.memory.InMemoryTaskManager;
 import main.java.ru.yandex.practicum.tasks.Epic;
 import main.java.ru.yandex.practicum.tasks.Subtask;
 import main.java.ru.yandex.practicum.tasks.Task;
-import main.java.ru.yandex.practicum.tasks.TaskStatus;
+import main.java.ru.yandex.practicum.tasks.TaskType;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -16,9 +16,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+
+import static main.java.ru.yandex.practicum.managers.file.TaskConverter.epicFromString;
+import static main.java.ru.yandex.practicum.managers.file.TaskConverter.epicToString;
+import static main.java.ru.yandex.practicum.managers.file.TaskConverter.subtaskFromString;
+import static main.java.ru.yandex.practicum.managers.file.TaskConverter.subtaskToString;
+import static main.java.ru.yandex.practicum.managers.file.TaskConverter.taskFromString;
+import static main.java.ru.yandex.practicum.managers.file.TaskConverter.taskToString;
 
 public class FileBackedTasksManager extends InMemoryTaskManager implements TaskManager {
     private final Path file;
@@ -29,9 +34,9 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
     }
 
     private void save() {
-        List<Task> allTasks = super.getAllTask();
-        List<Epic> allEpics = super.getAllEpic();
-        List<Subtask> allSubtasks = super.getAllSubtask();
+        List<Task> allTasks = getAllTask();
+        List<Epic> allEpics = getAllEpic();
+        List<Subtask> allSubtasks = getAllSubtask();
         StringBuilder buffer = new StringBuilder();
 
         buffer.append("id,type,name,status,description,epic");
@@ -49,7 +54,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
             buffer.append(System.lineSeparator());
         }
         buffer.append(System.lineSeparator());
-        buffer.append(historyToString(super.getHistory()));
+        buffer.append(historyToString(getHistory()));
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(file.toFile()))) {
             writer.write(buffer.toString());
@@ -58,114 +63,48 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
         }
     }
 
-    public void loadFromFile(Path file) {
+    public static FileBackedTasksManager loadFromFile(Path file) {
+        FileBackedTasksManager fileBackedTasksManager = new FileBackedTasksManager(new InMemoryHistoryManager(), file);
         try {
             List<String> lines = Files.readAllLines(file, StandardCharsets.UTF_8);
-            Map<Integer, Task> allTasksForLoadHistory = new HashMap<>();
             for (int i = 1; i < lines.size() - 2; i++) {
                 String[] split = lines.get(i).split(",");
                 switch (TaskType.valueOf(split[1])) {
                     case TASK:
                         Task task = taskFromString(lines.get(i));
-                        allTasksForLoadHistory.put(task.getId(), task);
-                        super.updateTaskInMap(task);
+                        fileBackedTasksManager.tasksMap.put(task.getId(), task);
                         break;
                     case EPIC:
                         Epic epic = epicFromString(lines.get(i));
-                        allTasksForLoadHistory.put(epic.getId(), epic);
-                        super.updateEpicInMap(epic);
+                        fileBackedTasksManager.epicMap.put(epic.getId(), epic);
                         break;
                     case SUBTASK:
                         Subtask subtask = subtaskFromString(lines.get(i));
-                        epic = (Epic) allTasksForLoadHistory.get(subtask.getIdEpic());
-                        epic.setIdSubtask(subtask.getId());
-                        allTasksForLoadHistory.put(subtask.getId(), subtask);
-                        super.updateSubtaskInMap(subtask);
+                        fileBackedTasksManager.epicMap.get(subtask.getIdEpic()).setIdSubtask(subtask.getId());
+                        fileBackedTasksManager.updateSubtaskInMap(subtask);
                 }
             }
             List<Integer> historyIdList = historyFromString(lines.get(lines.size() - 1));
-            Collections.reverse(historyIdList);
             for (Integer integer : historyIdList) {
-                Task task = allTasksForLoadHistory.get(integer);
-                if (task.getClass().equals(Task.class)) {
-                    super.getTaskById(task.getId());
-                } else if (task.getClass().equals(Epic.class)) {
-                    super.getEpicById(task.getId());
-                } else if (task.getClass().equals(Subtask.class)) {
-                    super.getSubtaskById(task.getId());
+                if (fileBackedTasksManager.tasksMap.containsKey(integer)) {
+                    fileBackedTasksManager.getTaskById(integer);
+                } else if (fileBackedTasksManager.epicMap.containsKey(integer)) {
+                    fileBackedTasksManager.getEpicById(integer);
+                } else if (fileBackedTasksManager.subtasksMap.containsKey(integer)) {
+                    fileBackedTasksManager.getSubtaskById(integer);
                 }
             }
         } catch (IOException e) {
             throw new ManagerSaveException("Файл data.csv не прочитался", e);
         }
-    }
-
-    private String taskToString(Task task) {
-        String[] reSplit = new String[5];
-        reSplit[0] = String.valueOf(task.getId());
-        reSplit[1] = String.valueOf(TaskType.TASK);
-        reSplit[2] = task.getName();
-        reSplit[3] = String.valueOf(task.getStatus());
-        reSplit[4] = task.getDescription();
-
-        return String.join(",", reSplit);
-    }
-
-    private String epicToString(Epic epic) {
-        String[] reSplit = new String[5];
-        reSplit[0] = String.valueOf(epic.getId());
-        reSplit[1] = String.valueOf(TaskType.EPIC);
-        reSplit[2] = epic.getName();
-        reSplit[3] = String.valueOf(epic.getStatus());
-        reSplit[4] = epic.getDescription();
-
-        return String.join(",", reSplit);
-    }
-
-    private String subtaskToString(Subtask subtask) {
-        String[] reSplit = new String[6];
-        reSplit[0] = String.valueOf(subtask.getId());
-        reSplit[1] = String.valueOf(TaskType.SUBTASK);
-        reSplit[2] = subtask.getName();
-        reSplit[3] = String.valueOf(subtask.getStatus());
-        reSplit[4] = subtask.getDescription();
-        reSplit[5] = String.valueOf(subtask.getIdEpic());
-
-        return String.join(",", reSplit);
-    }
-
-    private Task taskFromString(String value) {
-        String[] split = value.split(",");
-        Task task = new Task(split[2], split[4]);
-        task.setId(Integer.parseInt(split[0]));
-        task.setStatus(TaskStatus.valueOf(split[3]));
-
-        return task;
-    }
-
-    private Epic epicFromString(String value) {
-        String[] split = value.split(",");
-        Epic epic = new Epic(split[2], split[4]);
-        epic.setId(Integer.parseInt(split[0]));
-        epic.setStatus(TaskStatus.valueOf(split[3]));
-
-        return epic;
-    }
-
-    private Subtask subtaskFromString(String value) {
-        String[] split = value.split(",");
-        Subtask subtask = new Subtask(split[2], split[4], Integer.parseInt(split[5]));
-        subtask.setId(Integer.parseInt(split[0]));
-        subtask.setStatus(TaskStatus.valueOf(split[3]));
-
-        return subtask;
+        return fileBackedTasksManager;
     }
 
     private static String historyToString(List<Task> history) {
         StringBuilder result = new StringBuilder();
-        for (int i = 0; i < history.size(); i++) {
+        for (int i = history.size() - 1; i >= 0; i--) {
             result.append(history.get(i).getId());
-            if (i < history.size() - 1) {
+            if (i > 0) {
                 result.append(",");
             }
         }

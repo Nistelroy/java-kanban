@@ -1,4 +1,4 @@
-package main.java.ru.yandex.practicum.managers.disc;
+package main.java.ru.yandex.practicum.tasks;
 
 public enum TaskType {
     TASK,
