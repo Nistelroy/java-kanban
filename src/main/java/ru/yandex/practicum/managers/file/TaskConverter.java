@@ -6,6 +6,9 @@ import main.java.ru.yandex.practicum.tasks.Task;
 import main.java.ru.yandex.practicum.tasks.TaskStatus;
 import main.java.ru.yandex.practicum.tasks.TaskType;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class TaskConverter {
     public static String taskToString(Task task) {
         String[] reSplit = new String[5];
@@ -66,5 +69,28 @@ public class TaskConverter {
         subtask.setStatus(TaskStatus.valueOf(split[3]));
 
         return subtask;
+    }
+
+    public static String historyToString(List<Task> history) {
+        if (history != null) {
+            StringBuilder result = new StringBuilder();
+            for (int i = history.size() - 1; i >= 0; i--) {
+                result.append(history.get(i).getId());
+                if (i > 0) {
+                    result.append(",");
+                }
+            }
+            return result.toString();
+        }
+        return "";
+    }
+
+    public static List<Integer> historyFromString(String value) {
+        List<Integer> resultList = new ArrayList<>();
+        String[] items = value.split(",");
+        for (String item : items) {
+            resultList.add(Integer.parseInt(item.trim()));
+        }
+        return resultList;
     }
 }
