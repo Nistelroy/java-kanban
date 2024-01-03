@@ -1,6 +1,7 @@
 package main.java.ru.yandex.practicum.managers.memory;
 
 import main.java.ru.yandex.practicum.managers.HistoryManager;
+import main.java.ru.yandex.practicum.managers.Managers;
 import main.java.ru.yandex.practicum.managers.TaskManager;
 import main.java.ru.yandex.practicum.tasks.Epic;
 import main.java.ru.yandex.practicum.tasks.Subtask;
@@ -17,11 +18,7 @@ public class InMemoryTaskManager implements TaskManager {
     protected final Map<Integer, Task> tasksMap = new HashMap<>();
     protected final Map<Integer, Epic> epicMap = new HashMap<>();
     protected final Map<Integer, Subtask> subtasksMap = new HashMap<>();
-    protected final HistoryManager historyManager;
-
-    public InMemoryTaskManager(InMemoryHistoryManager inMemoryHistoryManager) {
-        this.historyManager = inMemoryHistoryManager;
-    }
+    protected final HistoryManager historyManager = Managers.getDefaultHistory();
 
     @Override
     public List<Task> getHistory() {

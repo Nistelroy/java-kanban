@@ -1,7 +1,6 @@
 package main.java.ru.yandex.practicum.managers.file;
 
 
-import main.java.ru.yandex.practicum.managers.memory.InMemoryHistoryManager;
 import main.java.ru.yandex.practicum.managers.memory.InMemoryTaskManager;
 import main.java.ru.yandex.practicum.tasks.Epic;
 import main.java.ru.yandex.practicum.tasks.Subtask;
@@ -16,20 +15,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
-import static main.java.ru.yandex.practicum.managers.file.TaskConverter.epicFromString;
-import static main.java.ru.yandex.practicum.managers.file.TaskConverter.epicToString;
-import static main.java.ru.yandex.practicum.managers.file.TaskConverter.historyFromString;
-import static main.java.ru.yandex.practicum.managers.file.TaskConverter.historyToString;
-import static main.java.ru.yandex.practicum.managers.file.TaskConverter.subtaskFromString;
-import static main.java.ru.yandex.practicum.managers.file.TaskConverter.subtaskToString;
-import static main.java.ru.yandex.practicum.managers.file.TaskConverter.taskFromString;
-import static main.java.ru.yandex.practicum.managers.file.TaskConverter.taskToString;
-
 public class FileBackedTasksManager extends InMemoryTaskManager {
     private final Path file;
 
     public FileBackedTasksManager(Path file) {
-        super(new InMemoryHistoryManager());
         this.file = file;
     }
 
@@ -42,19 +31,19 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         buffer.append("id,type,name,status,description,epic");
         buffer.append(System.lineSeparator());
         for (Task task : allTasks) {
-            buffer.append(taskToString(task));
+            buffer.append(TaskConverter.taskToString(task));
             buffer.append(System.lineSeparator());
         }
         for (Epic epic : allEpics) {
-            buffer.append(epicToString(epic));
+            buffer.append(TaskConverter.epicToString(epic));
             buffer.append(System.lineSeparator());
         }
         for (Subtask subtask : allSubtasks) {
-            buffer.append(subtaskToString(subtask));
+            buffer.append(TaskConverter.subtaskToString(subtask));
             buffer.append(System.lineSeparator());
         }
         buffer.append(System.lineSeparator());
-        buffer.append(historyToString(getHistory()));
+        buffer.append(TaskConverter.historyToString(getHistory()));
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(file.toFile()))) {
             writer.write(buffer.toString());
@@ -71,20 +60,20 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                 String[] split = lines.get(i).split(",");
                 switch (TaskType.valueOf(split[1])) {
                     case TASK:
-                        Task task = taskFromString(lines.get(i));
+                        Task task = TaskConverter.taskFromString(lines.get(i));
                         fileBackedTasksManager.tasksMap.put(task.getId(), task);
                         break;
                     case EPIC:
-                        Epic epic = epicFromString(lines.get(i));
+                        Epic epic = TaskConverter.epicFromString(lines.get(i));
                         fileBackedTasksManager.epicMap.put(epic.getId(), epic);
                         break;
                     case SUBTASK:
-                        Subtask subtask = subtaskFromString(lines.get(i));
+                        Subtask subtask = TaskConverter.subtaskFromString(lines.get(i));
                         fileBackedTasksManager.epicMap.get(subtask.getIdEpic()).setIdSubtask(subtask.getId());
                         fileBackedTasksManager.subtasksMap.put(subtask.getId(), subtask);
                 }
             }
-            List<Integer> historyIdList = historyFromString(lines.get(lines.size() - 1));
+            List<Integer> historyIdList = TaskConverter.historyFromString(lines.get(lines.size() - 1));
             for (Integer integer : historyIdList) {
                 if (fileBackedTasksManager.tasksMap.containsKey(integer)) {
                     fileBackedTasksManager.historyManager.add(fileBackedTasksManager.tasksMap.get(integer));
