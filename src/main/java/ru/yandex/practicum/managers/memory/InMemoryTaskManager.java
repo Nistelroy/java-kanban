@@ -75,8 +75,10 @@ public class InMemoryTaskManager implements TaskManager {
     public void setNewSubtask(Subtask task) {
         int newId = createId();
         task.setId(newId);
-        epicMap.get(task.getIdEpic()).setIdSubtask(newId);
+        Epic epic = epicMap.get(task.getIdEpic());
+        epic.setIdSubtask(newId);
         subtasksMap.put(newId, task);
+        statusEpicChanger(epic);
     }
 
     @Override

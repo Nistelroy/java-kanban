@@ -8,15 +8,21 @@ import main.java.ru.yandex.practicum.tasks.TaskStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static test.java.ru.yandex.practicum.managers.DataForTests.INCORRECT_ID;
+import static test.java.ru.yandex.practicum.managers.DataForTests.ONE_TASK_IN_LIST;
+import static test.java.ru.yandex.practicum.managers.DataForTests.ZERO_TASK_IN_LIST;
+import static test.java.ru.yandex.practicum.managers.DataForTests.getNewEpic;
+import static test.java.ru.yandex.practicum.managers.DataForTests.getNewSubtask;
+import static test.java.ru.yandex.practicum.managers.DataForTests.getNewTask;
 
 public abstract class TaskManagerTest<T extends TaskManager> {
-    public static final int INCORRECT_ID = 100;
-    public static final int ZERO_TASK_IN_LIST = 0;
-    public static final int ONE_TASK_IN_LIST = 1;
+    public static final int FIFTEEN_TASK_IN_HISTORY = 15;
     protected T taskManager;
 
     protected abstract T createTaskManager();
@@ -33,7 +39,6 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
         assertEquals(task, taskManager.getTaskById(task.getId()));
     }
-
 
     @Test
     void testGetTaskIncorrectIdReturnNull() {
@@ -103,6 +108,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     void testGetHistoryOneGetReturnSizeOne() {
         Task task = getNewTask();
         taskManager.setNewTask(task);
+
         taskManager.getTaskById(task.getId());
 
         assertEquals(ONE_TASK_IN_LIST, taskManager.getHistory().size());
@@ -112,6 +118,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     void testUpdateTaskCorrectTaskInMap() {
         Task task = getNewTask();
         taskManager.setNewTask(task);
+
         Task newTask = getNewTask();
         newTask.setId(task.getId());
         taskManager.updateTaskInMap(newTask);
@@ -123,6 +130,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     void testUpdateEpicCorrectEpicInMap() {
         Epic epic = getNewEpic();
         taskManager.setNewEpic(epic);
+
         Epic newEpic = getNewEpic();
         newEpic.setId(epic.getId());
         taskManager.updateEpicInMap(newEpic);
@@ -183,6 +191,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     void testDeleteEpicInMapSubtaskAlsoDelete() {
         Epic epic = getNewEpic();
         taskManager.setNewEpic(epic);
+
         Subtask subtask = getNewSubtask(epic);
         taskManager.setNewSubtask(subtask);
         taskManager.deleteEpicById(epic.getId());
@@ -194,6 +203,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     void testDeleteSubtaskInMapAbsent() {
         Epic epic = getNewEpic();
         taskManager.setNewEpic(epic);
+
         Subtask subtask = getNewSubtask(epic);
         taskManager.setNewSubtask(subtask);
         taskManager.deleteSubtaskById(subtask.getId());
@@ -205,6 +215,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     void testDeleteSubtaskIdInEpicAlsoDelete() {
         Epic epic = getNewEpic();
         taskManager.setNewEpic(epic);
+
         Subtask subtask = getNewSubtask(epic);
         taskManager.setNewSubtask(subtask);
         taskManager.deleteSubtaskById(subtask.getId());
@@ -216,10 +227,12 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     void testDeleteSubtaskStatusDoneEpicStatusNew() {
         Epic epic = getNewEpic();
         taskManager.setNewEpic(epic);
+
         Subtask subtask = getNewSubtask(epic);
         taskManager.setNewSubtask(subtask);
         subtask.setStatus(TaskStatus.IN_PROGRESS);
         taskManager.updateSubtaskInMap(subtask);
+
         taskManager.deleteSubtaskById(subtask.getId());
 
         assertEquals(TaskStatus.NEW, epic.getStatus());
@@ -229,6 +242,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     void testGetAllSubtaskFromEpicByIdAddTaskReturnList() {
         Epic epic = getNewEpic();
         taskManager.setNewEpic(epic);
+
         Subtask subtask = getNewSubtask(epic);
         taskManager.setNewSubtask(subtask);
 
@@ -254,6 +268,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     @Test
     void testGetAllTaskReturnListNoContTask() {
         Task task = getNewTask();
+
         assertFalse(taskManager.getAllTask().contains(task));
     }
 
@@ -268,6 +283,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     @Test
     void testGetAllEpicReturnListNoContEpic() {
         Epic epic = getNewEpic();
+
         assertFalse(taskManager.getAllEpic().contains(epic));
     }
 
@@ -275,6 +291,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     void testGetAllSubtaskAddSubtaskReturnListContSubtask() {
         Epic epic = getNewEpic();
         taskManager.setNewEpic(epic);
+
         Subtask subtask = getNewSubtask(epic);
         taskManager.setNewSubtask(subtask);
 
@@ -285,6 +302,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     void testGetAllSubtaskReturnListNoContSubtask() {
         Epic epic = getNewEpic();
         taskManager.setNewEpic(epic);
+
         Subtask subtask = getNewSubtask(epic);
 
         assertFalse(taskManager.getAllSubtask().contains(subtask));
@@ -294,10 +312,13 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     void testDeleteAllSubtaskInMapAbsent() {
         Epic epic = getNewEpic();
         taskManager.setNewEpic(epic);
+
         Subtask subtask = getNewSubtask(epic);
         taskManager.setNewSubtask(subtask);
+
         Subtask subtaskTwo = getNewSubtask(epic);
         taskManager.setNewSubtask(subtaskTwo);
+
         taskManager.deleteAllSubtask();
 
         assertEquals(ZERO_TASK_IN_LIST, taskManager.getAllSubtask().size());
@@ -307,8 +328,10 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     void testDeleteAllTaskInMapAbsent() {
         Task task = getNewTask();
         taskManager.setNewTask(task);
+
         Task taskTwo = getNewTask();
         taskManager.setNewTask(taskTwo);
+
         taskManager.deleteAllTask();
 
         assertEquals(ZERO_TASK_IN_LIST, taskManager.getAllTask().size());
@@ -318,22 +341,90 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     void testDeleteAllEpicInMapAbsent() {
         Epic epic = getNewEpic();
         taskManager.setNewEpic(epic);
+
         Epic epicTwo = getNewEpic();
         taskManager.setNewEpic(epicTwo);
+
         taskManager.deleteAllEpic();
 
         assertEquals(ZERO_TASK_IN_LIST, taskManager.getAllEpic().size());
     }
 
-    private static Subtask getNewSubtask(Epic epic) {
-        return new Subtask("Имя", "Описание", epic.getId());
+    @Test
+    void testHistoryZeroGetEpicHistoryClear() {
+        Epic epic = getNewEpic();
+        taskManager.setNewEpic(epic);
+
+        Epic epicTwo = getNewEpic();
+        taskManager.setNewEpic(epicTwo);
+
+        assertEquals(ZERO_TASK_IN_LIST, taskManager.getHistory().size());
     }
 
-    private static Epic getNewEpic() {
-        return new Epic("Имя", "Описание");
+    @Test
+    void testHistoryFifteenGetEpicHistoryFull() {
+        addFifteenRequestsInHistory();
+
+        assertEquals(FIFTEEN_TASK_IN_HISTORY, taskManager.getHistory().size());
     }
 
-    private static Task getNewTask() {
-        return new Task("Имя", "Описание");
+    @Test
+    void testHistoryRepeatGetEpicHistoryLastEpic() {
+        Epic epic = getNewEpic();
+        taskManager.setNewEpic(epic);
+        taskManager.getEpicById(epic.getId());
+
+        addFifteenRequestsInHistory();
+
+        taskManager.getEpicById(epic.getId());
+
+        assertEquals(epic, taskManager.getHistory().get(0));
+    }
+
+    @Test
+    void testHistoryDeleteEpicInStartHistoryContFalse() {
+        Epic epic = getNewEpic();
+        taskManager.setNewEpic(epic);
+        taskManager.getEpicById(epic.getId());
+
+        addFifteenRequestsInHistory();
+
+        taskManager.deleteEpicById(epic.getId());
+
+        assertFalse(taskManager.getHistory().contains(epic));
+    }
+
+    @Test
+    void testHistoryDeleteEpicInМiddleHistoryContFalse() {
+        addFifteenRequestsInHistory();
+        Epic epic = getNewEpic();
+        taskManager.setNewEpic(epic);
+        taskManager.getEpicById(epic.getId());
+        addFifteenRequestsInHistory();
+
+        taskManager.deleteEpicById(epic.getId());
+
+        assertFalse(taskManager.getHistory().contains(epic));
+    }
+
+    @Test
+    void testHistoryDeleteEpicInEndHistoryContFalse() {
+        addFifteenRequestsInHistory();
+        Epic epic = getNewEpic();
+        taskManager.setNewEpic(epic);
+        taskManager.getEpicById(epic.getId());
+
+        taskManager.deleteEpicById(epic.getId());
+
+        assertFalse(taskManager.getHistory().contains(epic));
+    }
+
+    protected void addFifteenRequestsInHistory() {
+        for (int i = 0; i < FIFTEEN_TASK_IN_HISTORY; i++) {
+            Epic epic = getNewEpic();
+            taskManager.setNewEpic(epic);
+            taskManager.getEpicById(epic.getId());
+        }
     }
 }
+

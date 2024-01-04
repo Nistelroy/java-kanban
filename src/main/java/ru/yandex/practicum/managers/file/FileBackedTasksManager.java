@@ -44,7 +44,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         }
         buffer.append(System.lineSeparator());
         buffer.append(TaskConverter.historyToString(getHistory()));
-
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(file.toFile()))) {
             writer.write(buffer.toString());
         } catch (IOException e) {
@@ -73,14 +72,16 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                         fileBackedTasksManager.subtasksMap.put(subtask.getId(), subtask);
                 }
             }
-            List<Integer> historyIdList = TaskConverter.historyFromString(lines.get(lines.size() - 1));
-            for (Integer integer : historyIdList) {
-                if (fileBackedTasksManager.tasksMap.containsKey(integer)) {
-                    fileBackedTasksManager.historyManager.add(fileBackedTasksManager.tasksMap.get(integer));
-                } else if (fileBackedTasksManager.epicMap.containsKey(integer)) {
-                    fileBackedTasksManager.historyManager.add(fileBackedTasksManager.epicMap.get(integer));
-                } else if (fileBackedTasksManager.subtasksMap.containsKey(integer)) {
-                    fileBackedTasksManager.historyManager.add(fileBackedTasksManager.subtasksMap.get(integer));
+            if (!(lines.get(lines.size() - 1).isEmpty())) {
+                List<Integer> historyIdList = TaskConverter.historyFromString(lines.get(lines.size() - 1));
+                for (Integer integer : historyIdList) {
+                    if (fileBackedTasksManager.tasksMap.containsKey(integer)) {
+                        fileBackedTasksManager.historyManager.add(fileBackedTasksManager.tasksMap.get(integer));
+                    } else if (fileBackedTasksManager.epicMap.containsKey(integer)) {
+                        fileBackedTasksManager.historyManager.add(fileBackedTasksManager.epicMap.get(integer));
+                    } else if (fileBackedTasksManager.subtasksMap.containsKey(integer)) {
+                        fileBackedTasksManager.historyManager.add(fileBackedTasksManager.subtasksMap.get(integer));
+                    }
                 }
             }
         } catch (IOException e) {

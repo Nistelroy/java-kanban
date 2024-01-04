@@ -9,6 +9,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static test.java.ru.yandex.practicum.managers.DataForTests.getNewEpic;
+import static test.java.ru.yandex.practicum.managers.DataForTests.getNewSubtask;
 
 class EpicStatusTest {
     private TaskManager taskManager;
@@ -20,7 +22,7 @@ class EpicStatusTest {
 
     @Test
     void testEpicWithoutSubtasksStatusNew() {
-        Epic epic = new Epic("Имя", "Описание");
+        Epic epic = getNewEpic();
         taskManager.setNewEpic(epic);
 
         assertEquals(TaskStatus.NEW, epic.getStatus());
@@ -28,58 +30,67 @@ class EpicStatusTest {
 
     @Test
     void testEpicAllSubtasksStatusNewEpicStatusNew() {
-        Epic epic = new Epic("Имя", "Описание");
+        Epic epic = getNewEpic();
         taskManager.setNewEpic(epic);
-        Subtask subtask = new Subtask("Имя", "Описание", epic.getId());
-        Subtask subtask2 = new Subtask("Имя", "Описание", epic.getId());
+
+        Subtask subtask = getNewSubtask(epic);
         taskManager.setNewSubtask(subtask);
-        taskManager.setNewSubtask(subtask2);
+
+        Subtask subtaskTwo = getNewSubtask(epic);
+        taskManager.setNewSubtask(subtaskTwo);
 
         assertEquals(TaskStatus.NEW, epic.getStatus(), "При добавлении 2 сабтаск NEW статус эпика расчитался неправильно");
     }
 
     @Test
     void testEpicAllSubtasksStatusDoneEpicStatusDone() {
-        Epic epic = new Epic("Имя", "Описание");
+        Epic epic = getNewEpic();
         taskManager.setNewEpic(epic);
-        Subtask subtask = new Subtask("Имя", "Описание", epic.getId());
-        Subtask subtask2 = new Subtask("Имя", "Описание", epic.getId());
+
+        Subtask subtask = getNewSubtask(epic);
         taskManager.setNewSubtask(subtask);
-        taskManager.setNewSubtask(subtask2);
         subtask.setStatus(TaskStatus.DONE);
-        subtask2.setStatus(TaskStatus.DONE);
         taskManager.updateSubtaskInMap(subtask);
-        taskManager.updateSubtaskInMap(subtask2);
+
+        Subtask subtaskTwo = getNewSubtask(epic);
+        taskManager.setNewSubtask(subtaskTwo);
+        subtaskTwo.setStatus(TaskStatus.DONE);
+        taskManager.updateSubtaskInMap(subtaskTwo);
 
         assertEquals(TaskStatus.DONE, epic.getStatus(), "При обновлении 2 сабтаск DONE статус эпика расчитался неправильно");
     }
 
     @Test
     void testEpicSubtasksStatusDoneAndNewEpicStatusInProgress() {
-        Epic epic = new Epic("Имя", "Описание");
+        Epic epic = getNewEpic();
         taskManager.setNewEpic(epic);
-        Subtask subtask = new Subtask("Имя", "Описание", epic.getId());
-        Subtask subtask2 = new Subtask("Имя", "Описание", epic.getId());
+
+        Subtask subtask = getNewSubtask(epic);
         taskManager.setNewSubtask(subtask);
-        taskManager.setNewSubtask(subtask2);
         subtask.setStatus(TaskStatus.DONE);
         taskManager.updateSubtaskInMap(subtask);
+
+        Subtask subtaskTwo = getNewSubtask(epic);
+        taskManager.setNewSubtask(subtaskTwo);
+
 
         assertEquals(TaskStatus.IN_PROGRESS, epic.getStatus(), "При обновлении статуса одной сабтаски статус эпика расчитался неправильно");
     }
 
     @Test
     void testEpicAllSubtasksStatusInProgressEpicStatusInProgress() {
-        Epic epic = new Epic("Имя", "Описание");
+        Epic epic = getNewEpic();
         taskManager.setNewEpic(epic);
-        Subtask subtask = new Subtask("Имя", "Описание", epic.getId());
-        Subtask subtask2 = new Subtask("Имя", "Описание", epic.getId());
+
+        Subtask subtask = getNewSubtask(epic);
         taskManager.setNewSubtask(subtask);
-        taskManager.setNewSubtask(subtask2);
         subtask.setStatus(TaskStatus.IN_PROGRESS);
-        subtask2.setStatus(TaskStatus.IN_PROGRESS);
         taskManager.updateSubtaskInMap(subtask);
-        taskManager.updateSubtaskInMap(subtask2);
+
+        Subtask subtaskTwo = getNewSubtask(epic);
+        taskManager.setNewSubtask(subtaskTwo);
+        subtaskTwo.setStatus(TaskStatus.IN_PROGRESS);
+        taskManager.updateSubtaskInMap(subtaskTwo);
 
         assertEquals(TaskStatus.IN_PROGRESS, epic.getStatus(), "При обновлении 2 сабтаск In Progress статус эпика расчитался неправильно");
     }

@@ -56,24 +56,28 @@ public class InMemoryHistoryManager implements HistoryManager {
     private void removeNode(Node node) {
         if (node != null) {
             if (node.prev == null && node.next == null) {
-                lastNode = null;
                 firstNode = null;
-                return;
-            }
-            Node leftNode = node.prev;
-            Node rightNode = node.next;
-            if (leftNode != null) {
-                leftNode.next = rightNode;
-                if (leftNode.prev == null) {
-                    firstNode = leftNode;
+                lastNode = null;
+            } else {
+                if (node.prev != null) {
+                    node.prev.next = node.next;
+                    if (node.prev.next == null) {
+                        lastNode = node.prev;
+                    }
+                } else {
+                    firstNode = node.next;
+                }
+                if (node.next != null) {
+                    node.next.prev = node.prev;
+                    if (node.next.prev == null) {
+                        firstNode = node.next;
+                    }
+                } else {
+                    lastNode = node.prev;
                 }
             }
-            if (rightNode != null) {
-                rightNode.prev = leftNode;
-                if (rightNode.next == null) {
-                    lastNode = rightNode;
-                }
-            }
+            node.prev = null;
+            node.next = null;
         }
     }
 }
