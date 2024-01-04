@@ -1,4 +1,4 @@
-package test.main.java.ru.yandex.practicum.managers;
+package test.java.ru.yandex.practicum.managers;
 
 import main.java.ru.yandex.practicum.managers.memory.InMemoryTaskManager;
 

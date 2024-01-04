@@ -1,4 +1,4 @@
-package test.main.java.ru.yandex.practicum.managers;
+package test.java.ru.yandex.practicum.managers;
 
 import main.java.ru.yandex.practicum.managers.file.FileBackedTasksManager;
 
@@ -9,7 +9,6 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksM
     private static final Path file = Paths.get("src/main/resources/test_data.csv");
     @Override
     protected FileBackedTasksManager createTaskManager() {
-
         return new FileBackedTasksManager(file);
     }
 }
