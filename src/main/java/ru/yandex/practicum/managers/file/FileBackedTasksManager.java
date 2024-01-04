@@ -22,7 +22,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         this.file = file;
     }
 
-    private void save() {
+    public void save() {
         List<Task> allTasks = getAllTask();
         List<Epic> allEpics = getAllEpic();
         List<Subtask> allSubtasks = getAllSubtask();

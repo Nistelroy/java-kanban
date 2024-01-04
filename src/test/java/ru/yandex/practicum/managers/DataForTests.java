@@ -13,7 +13,6 @@ public class DataForTests {
     public static final int ZERO_TASK_IN_LIST = 0;
     public static final int ONE_TASK_IN_LIST = 1;
 
-
     public static Subtask getNewSubtask(Epic epic) {
         return new Subtask("Имя", "Описание", epic.getId());
     }

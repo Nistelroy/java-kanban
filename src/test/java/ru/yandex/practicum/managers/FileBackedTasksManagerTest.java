@@ -2,6 +2,7 @@ package test.java.ru.yandex.practicum.managers;
 
 import main.java.ru.yandex.practicum.managers.file.FileBackedTasksManager;
 import main.java.ru.yandex.practicum.tasks.Epic;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -15,9 +16,9 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksM
     protected FileBackedTasksManager createTaskManager() {
         return new FileBackedTasksManager(file);
     }
+
     @Test
     void testHistoryBackUpInFileClearHistory() {
-
         Epic epic = getNewEpic();
         taskManager.setNewEpic(epic);
 
@@ -28,7 +29,6 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksM
 
     @Test
     void testHistoryBackUpInFileFullHistory() {
-
         Epic epic = getNewEpic();
         taskManager.setNewEpic(epic);
         taskManager.getEpicById(epic.getId());
@@ -42,7 +42,6 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksM
 
     @Test
     void testHistoryBackUpInFileClearTaskMap() {
-
         Epic epic = getNewEpic();
 
         taskManager = FileBackedTasksManager.loadFromFile(file);
@@ -50,4 +49,9 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksM
         assertFalse(taskManager.getHistory().contains(epic));
     }
 
+    @AfterEach
+    void tearDown() {
+        taskManager = new FileBackedTasksManager(file);
+        taskManager.save();
+    }
 }
