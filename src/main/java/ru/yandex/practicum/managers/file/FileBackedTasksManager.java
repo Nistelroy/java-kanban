@@ -28,7 +28,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         List<Subtask> allSubtasks = getAllSubtask();
         StringBuilder buffer = new StringBuilder();
 
-        buffer.append("id,type,name,status,description,epic");
+        buffer.append("id,type,name,status,description,epic,duration,start_time");
         buffer.append(System.lineSeparator());
         for (Task task : allTasks) {
             buffer.append(TaskConverter.taskToString(task));
@@ -90,7 +90,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         return fileBackedTasksManager;
     }
 
-
     @Override
     public Task getTaskById(int id) {
         Task task = super.getTaskById(id);
@@ -103,7 +102,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         Epic epic = super.getEpicById(id);
         save();
         return epic;
-
     }
 
     @Override
@@ -111,7 +109,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         Subtask subtask = super.getSubtaskById(id);
         save();
         return subtask;
-
     }
 
     @Override

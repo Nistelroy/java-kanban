@@ -8,10 +8,15 @@ import main.java.ru.yandex.practicum.tasks.TaskStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDateTime;
+import java.util.TreeSet;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static test.java.ru.yandex.practicum.managers.DataForTests.ANY_DURATION;
 import static test.java.ru.yandex.practicum.managers.DataForTests.INCORRECT_ID;
 import static test.java.ru.yandex.practicum.managers.DataForTests.ONE_TASK_IN_LIST;
 import static test.java.ru.yandex.practicum.managers.DataForTests.ZERO_TASK_IN_LIST;
@@ -20,7 +25,7 @@ import static test.java.ru.yandex.practicum.managers.DataForTests.getNewSubtask;
 import static test.java.ru.yandex.practicum.managers.DataForTests.getNewTask;
 
 public abstract class TaskManagerTest<T extends TaskManager> {
-    public static final int FIFTEEN_TASK_IN_HISTORY = 15;
+    public static final int FIFE_TASK_IN_HISTORY = 5;
     protected T taskManager;
 
     protected abstract T createTaskManager();
@@ -360,10 +365,10 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void testHistoryFifteenGetEpicHistoryFull() {
-        addFifteenRequestsInHistory();
+    void testHistoryFifeGetEpicHistoryFull() {
+        addFifeRequestsInHistory();
 
-        assertEquals(FIFTEEN_TASK_IN_HISTORY, taskManager.getHistory().size());
+        assertEquals(FIFE_TASK_IN_HISTORY, taskManager.getHistory().size());
     }
 
     @Test
@@ -372,7 +377,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         taskManager.setNewEpic(epic);
         taskManager.getEpicById(epic.getId());
 
-        addFifteenRequestsInHistory();
+        addFifeRequestsInHistory();
 
         taskManager.getEpicById(epic.getId());
 
@@ -385,7 +390,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         taskManager.setNewEpic(epic);
         taskManager.getEpicById(epic.getId());
 
-        addFifteenRequestsInHistory();
+        addFifeRequestsInHistory();
 
         taskManager.deleteEpicById(epic.getId());
 
@@ -394,11 +399,11 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void testHistoryDeleteEpicInМiddleHistoryContFalse() {
-        addFifteenRequestsInHistory();
+        addFifeRequestsInHistory();
         Epic epic = getNewEpic();
         taskManager.setNewEpic(epic);
         taskManager.getEpicById(epic.getId());
-        addFifteenRequestsInHistory();
+        addFifeRequestsInHistory();
 
         taskManager.deleteEpicById(epic.getId());
 
@@ -407,7 +412,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void testHistoryDeleteEpicInEndHistoryContFalse() {
-        addFifteenRequestsInHistory();
+        addFifeRequestsInHistory();
         Epic epic = getNewEpic();
         taskManager.setNewEpic(epic);
         taskManager.getEpicById(epic.getId());
@@ -417,8 +422,122 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         assertFalse(taskManager.getHistory().contains(epic));
     }
 
-    protected void addFifteenRequestsInHistory() {
-        for (int i = 0; i < FIFTEEN_TASK_IN_HISTORY; i++) {
+    @Test
+    void getStartTimeTaskReturnStartTime() {
+        LocalDateTime startTime = LocalDateTime.now();
+        Task task = new Task("Имя", "Описание", ANY_DURATION, startTime);
+        taskManager.setNewTask(task);
+        Task taskInMap = taskManager.getTaskById(task.getId());
+        assertEquals(startTime, taskInMap.getStartTime());
+    }
+
+    @Test
+    void getEndTimeTaskReturnEndTime() {
+        LocalDateTime startTime = LocalDateTime.now();
+        Task task = new Task("Имя", "Описание", ANY_DURATION, startTime);
+        LocalDateTime endTime = startTime.plusMinutes(ANY_DURATION);
+        taskManager.setNewTask(task);
+        Task taskInMap = taskManager.getTaskById(task.getId());
+        assertEquals(endTime, taskInMap.getEndTime());
+    }
+
+    @Test
+    void getEndTaskTimeShouldBeNullWithoutStartTime() {
+        Task taskWithoutStart = new Task("Имя", "Описание", ANY_DURATION, null);
+        taskManager.setNewTask(taskWithoutStart);
+        Task taskInMap = taskManager.getTaskById(taskWithoutStart.getId());
+        assertNull(taskInMap.getEndTime());
+    }
+
+    @Test
+    void getEpicStartTimeWithoutSubtasks() {
+        Epic epic = getNewEpic();
+        taskManager.setNewEpic(epic);
+        Epic epicInMap = taskManager.getEpicById(epic.getId());
+        assertNull(epicInMap.getStartTime());
+    }
+
+
+    @Test
+    void getEpicEndTimeWithoutSubtasks() {
+        Epic epic = getNewEpic();
+        taskManager.setNewEpic(epic);
+        Epic epicInMap = taskManager.getEpicById(epic.getId());
+        assertNull(epicInMap.getStartTime());
+    }
+
+    @Test
+    void getSubtaskStartTimeShouldBeNullWithoutStartTime() {
+        Epic epic = getNewEpic();
+        taskManager.setNewEpic(epic);
+        Subtask subtask = new Subtask("Имя", "Описание", ANY_DURATION, null, epic.getId());
+        taskManager.setNewSubtask(subtask);
+        Subtask subtaskInMap = taskManager.getSubtaskById(subtask.getId());
+
+        assertNull(subtaskInMap.getEndTime());
+        assertNull(epic.getEndTime());
+    }
+
+    @Test
+    void getSubtaskStartTimeReturnStartTime() {
+        LocalDateTime startTime = LocalDateTime.now();
+        Epic epic = getNewEpic();
+        taskManager.setNewEpic(epic);
+        Subtask subtask = new Subtask("Имя", "Описание", ANY_DURATION, startTime, epic.getId());
+        taskManager.setNewSubtask(subtask);
+        Subtask subtaskInMap = taskManager.getSubtaskById(subtask.getId());
+
+        assertEquals(startTime, subtaskInMap.getStartTime());
+        assertEquals(startTime, epic.getStartTime());
+        assertEquals(startTime.plusMinutes(ANY_DURATION), subtaskInMap.getEndTime());
+        assertEquals(startTime.plusMinutes(ANY_DURATION), epic.getEndTime());
+    }
+
+
+    @Test
+    void getEpicEndTimeTwoSubtasksSummDuration() {
+        LocalDateTime startTime = LocalDateTime.now();
+        Epic epic = getNewEpic();
+        taskManager.setNewEpic(epic);
+        Subtask subtask = new Subtask("Имя", "Описание", ANY_DURATION, startTime, epic.getId());
+        taskManager.setNewSubtask(subtask);
+        Subtask subtask2 = new Subtask("Имя", "Описание", ANY_DURATION, startTime.plusMinutes(ANY_DURATION), epic.getId());
+        taskManager.setNewSubtask(subtask2);
+
+        Epic epicInMap = taskManager.getEpicById(epic.getId());
+
+        assertEquals(startTime.plusMinutes(ANY_DURATION * 2), epicInMap.getEndTime());
+    }
+
+    @Test
+    void tasksShouldBePrioritizedByStartTime() {
+        Task task = new Task("Имя", "Описание", ANY_DURATION, LocalDateTime.now());
+        Task twoTask = new Task("Имя", "Описание", ANY_DURATION, LocalDateTime.now().plusMinutes(ANY_DURATION));
+        taskManager.setNewTask(task);
+        taskManager.setNewTask(twoTask);
+
+        TreeSet<Task> prioritizedTasks = taskManager.getPrioritizedTasks();
+        Task firstInSet = prioritizedTasks.iterator().next();
+
+        assertEquals(task.getId(), firstInSet.getId());
+    }
+
+    @Test
+    void shouldNotAllowTasksWithOverlappingTimes() {
+        Task task = new Task("Имя", "Описание", ANY_DURATION, LocalDateTime.now());
+        Task overlapTask = new Task("Имя", "Описание", ANY_DURATION, LocalDateTime.now().plusMinutes(ANY_DURATION / 2));
+        taskManager.setNewTask(task);
+
+        Exception exception = assertThrows(IllegalStateException.class, () -> taskManager.setNewTask(overlapTask));
+
+        String expectedMessage = "Периоды задач не могут пересекаться";
+        String actualMessage = exception.getMessage();
+
+        assertTrue(actualMessage.contains(expectedMessage));
+    }
+
+    protected void addFifeRequestsInHistory() {
+        for (int i = 0; i < FIFE_TASK_IN_HISTORY; i++) {
             Epic epic = getNewEpic();
             taskManager.setNewEpic(epic);
             taskManager.getEpicById(epic.getId());

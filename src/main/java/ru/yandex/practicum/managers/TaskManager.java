@@ -5,6 +5,7 @@ import main.java.ru.yandex.practicum.tasks.Subtask;
 import main.java.ru.yandex.practicum.tasks.Task;
 
 import java.util.List;
+import java.util.TreeSet;
 
 public interface TaskManager {
     List<Task> getHistory();
@@ -46,4 +47,6 @@ public interface TaskManager {
     void deleteAllEpic();
 
     void deleteAllSubtask();
+
+    TreeSet<Task> getPrioritizedTasks();
 }
