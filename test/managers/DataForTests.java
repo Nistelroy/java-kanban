@@ -13,10 +13,6 @@ import java.util.List;
 import java.util.Random;
 
 public class DataForTests {
-
-    // При многократном запуске тестов они проходят, в логике работы менеджера багов не нашёл
-    // В тестах багов тоже не нашёл, скорее всего баги в моих методах генерации тасок для тестов, я так и не нашёл в чём именно
-
     public static final Path file = Paths.get("src/main/resources/test_data.csv");
     public static final int INCORRECT_ID = 100;
     public static final int ZERO_TASK_IN_LIST = 0;

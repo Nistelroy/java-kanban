@@ -4,15 +4,11 @@ import main.java.ru.yandex.practicum.managers.TaskManager;
 import main.java.ru.yandex.practicum.managers.file.FileBackedTasksManager;
 import main.java.ru.yandex.practicum.tasks.Epic;
 import main.java.ru.yandex.practicum.tasks.Task;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksManager> {
 
@@ -30,7 +26,6 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksM
 
         List<Task> history1 = taskManager.getHistory();
         List<Task> history2 = taskManager2.getHistory();
-
 
         assertEquals(history1, history2);
     }

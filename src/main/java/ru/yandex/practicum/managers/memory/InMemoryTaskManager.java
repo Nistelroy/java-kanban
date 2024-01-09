@@ -303,7 +303,6 @@ public class InMemoryTaskManager implements TaskManager {
         if (startNew == null || endNew == null || startExisting == null || endExisting == null) {
             return false;
         }
-
-        return startNew.isBefore(endExisting) && endNew.isAfter(startExisting);
+        return startNew.isBefore(endExisting) && endNew.isAfter(startExisting); //newTask.start <= existingTask.end AND newTask.end >= existingTask.start
     }
 }

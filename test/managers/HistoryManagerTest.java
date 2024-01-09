@@ -3,18 +3,13 @@ package managers;
 import main.java.ru.yandex.practicum.managers.HistoryManager;
 import main.java.ru.yandex.practicum.managers.memory.InMemoryHistoryManager;
 import main.java.ru.yandex.practicum.tasks.Epic;
-import main.java.ru.yandex.practicum.tasks.Task;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class HistoryManagerTest {
-    public static final int FIFE_TASK_IN_HISTORY = 5;
     public static final int FIRST_EPIC_ID = 1;
     private static HistoryManager historyManager;
 

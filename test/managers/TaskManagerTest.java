@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.TreeSet;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -94,7 +93,6 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         assertNull(taskManager.getSubtaskById(DataForTests.INCORRECT_ID));
     }
 
-/*
     @Test
     void testGetHistoryNoGetReturnSizeZero() {
         Task task = DataForTests.getNewTask();
@@ -102,9 +100,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
         assertEquals(DataForTests.ZERO_TASK_IN_LIST, taskManager.getHistory().size());
     }
-*/
 
-/*
     @Test
     void testGetHistoryOneGetReturnSizeOne() {
         Task task = DataForTests.getNewTask();
@@ -114,7 +110,6 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
         assertEquals(DataForTests.ONE_TASK_IN_LIST, taskManager.getHistory().size());
     }
-*/
 
     @Test
     void testUpdateTaskCorrectTaskInMap() {
@@ -352,74 +347,74 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         assertEquals(DataForTests.ZERO_TASK_IN_LIST, taskManager.getAllEpic().size());
     }
 
-//    @Test
-//    void testHistoryZeroGetEpicHistoryClear() {
-//        Epic epic = DataForTests.getNewEpic();
-//        taskManager.setNewEpic(epic);
-//
-//        Epic epicTwo = DataForTests.getNewEpic();
-//        taskManager.setNewEpic(epicTwo);
-//
-//        assertEquals(DataForTests.ZERO_TASK_IN_LIST, taskManager.getHistory().size());
-//    }
-//
-//    @Test
-//    void testHistoryFifeGetEpicHistoryFull() {
-//        addFifeRequestsInHistory();
-//
-//        assertEquals(FIFE_TASK_IN_HISTORY, taskManager.getHistory().size());
-//    }
-//
-//    @Test
-//    void testHistoryRepeatGetEpicHistoryLastEpic() {
-//        Epic epic = DataForTests.getNewEpic();
-//        taskManager.setNewEpic(epic);
-//        taskManager.getEpicById(epic.getId());
-//
-//        addFifeRequestsInHistory();
-//
-//        taskManager.getEpicById(epic.getId());
-//
-//        assertEquals(epic, taskManager.getHistory().get(0));
-//    }
-//
-//    @Test
-//    void testHistoryDeleteEpicInStartHistoryContFalse() {
-//        Epic epic = DataForTests.getNewEpic();
-//        taskManager.setNewEpic(epic);
-//        taskManager.getEpicById(epic.getId());
-//
-//        addFifeRequestsInHistory();
-//
-//        taskManager.deleteEpicById(epic.getId());
-//
-//        assertFalse(taskManager.getHistory().contains(epic));
-//    }
-//
-//    @Test
-//    void testHistoryDeleteEpicInМiddleHistoryContFalse() {
-//        addFifeRequestsInHistory();
-//        Epic epic = DataForTests.getNewEpic();
-//        taskManager.setNewEpic(epic);
-//        taskManager.getEpicById(epic.getId());
-//        addFifeRequestsInHistory();
-//
-//        taskManager.deleteEpicById(epic.getId());
-//
-//        assertFalse(taskManager.getHistory().contains(epic));
-//    }
-//
-//    @Test
-//    void testHistoryDeleteEpicInEndHistoryContFalse() {
-//        addFifeRequestsInHistory();
-//        Epic epic = DataForTests.getNewEpic();
-//        taskManager.setNewEpic(epic);
-//        taskManager.getEpicById(epic.getId());
-//
-//        taskManager.deleteEpicById(epic.getId());
-//
-//        assertFalse(taskManager.getHistory().contains(epic));
-//    }
+    @Test
+    void testHistoryZeroGetEpicHistoryClear() {
+        Epic epic = DataForTests.getNewEpic();
+        taskManager.setNewEpic(epic);
+
+        Epic epicTwo = DataForTests.getNewEpic();
+        taskManager.setNewEpic(epicTwo);
+
+        assertEquals(DataForTests.ZERO_TASK_IN_LIST, taskManager.getHistory().size());
+    }
+
+    @Test
+    void testHistoryFifeGetEpicHistoryFull() {
+        addFifeRequestsInHistory();
+
+        assertEquals(FIFE_TASK_IN_HISTORY, taskManager.getHistory().size());
+    }
+
+    @Test
+    void testHistoryRepeatGetEpicHistoryLastEpic() {
+        Epic epic = DataForTests.getNewEpic();
+        taskManager.setNewEpic(epic);
+        taskManager.getEpicById(epic.getId());
+
+        addFifeRequestsInHistory();
+
+        taskManager.getEpicById(epic.getId());
+
+        assertEquals(epic, taskManager.getHistory().get(0));
+    }
+
+    @Test
+    void testHistoryDeleteEpicInStartHistoryContFalse() {
+        Epic epic = DataForTests.getNewEpic();
+        taskManager.setNewEpic(epic);
+        taskManager.getEpicById(epic.getId());
+
+        addFifeRequestsInHistory();
+
+        taskManager.deleteEpicById(epic.getId());
+
+        assertFalse(taskManager.getHistory().contains(epic));
+    }
+
+    @Test
+    void testHistoryDeleteEpicInМiddleHistoryContFalse() {
+        addFifeRequestsInHistory();
+        Epic epic = DataForTests.getNewEpic();
+        taskManager.setNewEpic(epic);
+        taskManager.getEpicById(epic.getId());
+        addFifeRequestsInHistory();
+
+        taskManager.deleteEpicById(epic.getId());
+
+        assertFalse(taskManager.getHistory().contains(epic));
+    }
+
+    @Test
+    void testHistoryDeleteEpicInEndHistoryContFalse() {
+        addFifeRequestsInHistory();
+        Epic epic = DataForTests.getNewEpic();
+        taskManager.setNewEpic(epic);
+        taskManager.getEpicById(epic.getId());
+
+        taskManager.deleteEpicById(epic.getId());
+
+        assertFalse(taskManager.getHistory().contains(epic));
+    }
 
     @Test
     void getStartTimeTaskReturnStartTime() {
@@ -535,7 +530,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         assertTrue(actualMessage.contains(expectedMessage));
     }
 
-   protected void addFifeRequestsInHistory() {
+    protected void addFifeRequestsInHistory() {
         for (int i = 0; i < FIFE_TASK_IN_HISTORY; i++) {
             Epic epic = DataForTests.getNewEpic();
             taskManager.setNewEpic(epic);
