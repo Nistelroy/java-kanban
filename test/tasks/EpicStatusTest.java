@@ -1,4 +1,4 @@
-package test.java.ru.yandex.practicum.tasks;
+package tasks;
 
 import main.java.ru.yandex.practicum.managers.TaskManager;
 import main.java.ru.yandex.practicum.managers.memory.InMemoryTaskManager;
@@ -8,9 +8,9 @@ import main.java.ru.yandex.practicum.tasks.TaskStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static managers.DataForTests.getNewEpic;
+import static managers.DataForTests.getNewSubtask;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static test.java.ru.yandex.practicum.managers.DataForTests.getNewEpic;
-import static test.java.ru.yandex.practicum.managers.DataForTests.getNewSubtask;
 
 class EpicStatusTest {
     private TaskManager taskManager;

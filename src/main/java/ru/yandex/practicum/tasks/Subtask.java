@@ -1,6 +1,7 @@
 package main.java.ru.yandex.practicum.tasks;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 public class Subtask extends Task {
     private final int idEpic;
@@ -13,6 +14,26 @@ public class Subtask extends Task {
 
     public int getIdEpic() {
         return idEpic;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Subtask subtask = (Subtask) o;
+        return getId() == subtask.getId()
+                && getDuration() == subtask.getDuration()
+                && Objects.equals(getName(), subtask.getName())
+                && Objects.equals(getDescription(), subtask.getDescription())
+                && getStatus() == subtask.getStatus()
+                && Objects.equals(getStartTime(), subtask.getStartTime())
+                && getType() == subtask.getType()
+                && getIdEpic() == subtask.getIdEpic();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), idEpic);
     }
 
     @Override

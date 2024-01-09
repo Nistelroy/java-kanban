@@ -1,4 +1,4 @@
-package test.java.ru.yandex.practicum.managers;
+package managers;
 
 import main.java.ru.yandex.practicum.tasks.Epic;
 import main.java.ru.yandex.practicum.tasks.Subtask;
@@ -21,6 +21,7 @@ public class DataForTests {
     public static final int INCORRECT_ID = 100;
     public static final int ZERO_TASK_IN_LIST = 0;
     public static final int ONE_TASK_IN_LIST = 1;
+    public static final int TWO_TASKS_IN_LIST = 2;
     public static List<Task> existingTasks = new ArrayList<>();
     public static final int ANY_DURATION = 30;
 

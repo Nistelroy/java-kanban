@@ -36,8 +36,10 @@ public class InMemoryTaskManager implements TaskManager {
         return Integer.compare(o1.getId(), o2.getId());
     });
 
-    public TreeSet<Task> getPrioritizedTasks() {
-        return prioritizedTasks;
+    @Override
+    public List<Task> getPrioritizedTasks() {
+        List<Task> priorTaskList = new ArrayList<>(prioritizedTasks);
+        return priorTaskList;
     }
 
     @Override
@@ -85,7 +87,6 @@ public class InMemoryTaskManager implements TaskManager {
         int newId = createId();
         task.setId(newId);
         epicMap.put(newId, task);
-        updatePrioritizedTasks(task);
     }
 
     @Override
@@ -189,7 +190,6 @@ public class InMemoryTaskManager implements TaskManager {
         tasksMap.clear();
         for (Task task : historyManager.getHistory()) {
             if (task.getType().equals(TaskType.TASK)) {
-                prioritizedTasks.remove(task);
                 historyManager.remove(task.getId());
             }
         }
@@ -299,9 +299,11 @@ public class InMemoryTaskManager implements TaskManager {
         LocalDateTime endNew = newTask.getEndTime();
         LocalDateTime startExisting = existingTask.getStartTime();
         LocalDateTime endExisting = existingTask.getEndTime();
+
         if (startNew == null || endNew == null || startExisting == null || endExisting == null) {
             return false;
         }
-        return startNew.isBefore(endExisting) && startExisting.isBefore(endNew);
+
+        return startNew.isBefore(endExisting) && endNew.isAfter(startExisting);
     }
 }

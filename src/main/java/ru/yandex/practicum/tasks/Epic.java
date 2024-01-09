@@ -2,6 +2,7 @@ package main.java.ru.yandex.practicum.tasks;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class Epic extends Task {
     private final ArrayList<Integer> idSubtask = new ArrayList<>();
@@ -35,6 +36,27 @@ public class Epic extends Task {
 
     public void setEndTime(LocalDateTime endTime) {
         this.endTime = endTime;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Epic epic = (Epic) o;
+        return getId() == epic.getId()
+                && getDuration() == epic.getDuration()
+                && Objects.equals(getName(), epic.getName())
+                && Objects.equals(getDescription(), epic.getDescription())
+                && getStatus() == epic.getStatus()
+                && Objects.equals(getStartTime(), epic.getStartTime())
+                && getType() == epic.getType()
+                && Objects.equals(idSubtask, epic.idSubtask)
+                && Objects.equals(endTime, epic.endTime);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), idSubtask, endTime);
     }
 
     @Override
