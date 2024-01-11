@@ -1,6 +1,7 @@
 package main.java.ru.yandex.practicum.tasks;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -68,11 +69,16 @@ public class Epic extends Task {
         } else {
             result = result + ", description.length=null";
         }
-        return result + ", id=" + super.getId() +
+        result = result + ", id=" + getId() +
                 ", status='" + getStatus() + '\'' +
                 ", idSubtask=" + idSubtask + '\'' +
-                ", duration=" + getDuration() +
-                ", startTime=" + getStartTime() +
+                ", duration=" + getDuration();
+        if (getStartTime() != null) {
+            result = result + ", startTime=" + getStartTime().format(DateTimeFormatter.ofPattern("HH.mm dd.MM.yyyy"));
+        } else {
+            result = result + ", startTime=null";
+        }
+        return result +
                 '}';
     }
 }

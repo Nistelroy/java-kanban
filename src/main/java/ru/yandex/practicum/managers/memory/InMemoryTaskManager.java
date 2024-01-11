@@ -38,8 +38,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public List<Task> getPrioritizedTasks() {
-        List<Task> priorTaskList = new ArrayList<>(prioritizedTasks);
-        return priorTaskList;
+        return new ArrayList<>(prioritizedTasks);
     }
 
     @Override
@@ -93,7 +92,7 @@ public class InMemoryTaskManager implements TaskManager {
     public void updateEpicInMap(Epic task) {
         statusEpicChanger(task);
         epicMap.put(task.getId(), task);
-        updatePrioritizedTasks(task);
+
     }
 
     @Override
@@ -271,30 +270,19 @@ public class InMemoryTaskManager implements TaskManager {
         }
     }
 
-    private void updatePrioritizedTasks(Task task) {
+    protected void updatePrioritizedTasks(Task task) {
         if (task.getStartTime() != null && task.getEndTime() != null) {
-            prioritizedTasks.remove(task);
+            prioritizedTasks.removeIf(thisTask -> task.getId() == thisTask.getId());
             for (Task thisTask : prioritizedTasks) {
-                if (tasksIntersect(task, thisTask)) {
-                    prioritizedTasks.add(task);
+                if (isTasksIntersect(task, thisTask)) {
                     throw new IllegalStateException("Периоды задач не могут пересекаться");
                 }
             }
             prioritizedTasks.add(task);
-        } else if (task.getType().equals(TaskType.EPIC)) {
-            Epic epic = (Epic) task;
-            if (!epic.getIdSubtask().isEmpty()) {
-                for (Task existing : prioritizedTasks) {
-                    if (tasksIntersect(task, existing)) {
-                        throw new IllegalStateException("Периоды задач не могут пересекаться");
-                    }
-                }
-                prioritizedTasks.add(task);
-            }
         }
     }
 
-    private boolean tasksIntersect(Task newTask, Task existingTask) {
+    private boolean isTasksIntersect(Task newTask, Task existingTask) {
         LocalDateTime startNew = newTask.getStartTime();
         LocalDateTime endNew = newTask.getEndTime();
         LocalDateTime startExisting = existingTask.getStartTime();
@@ -303,6 +291,6 @@ public class InMemoryTaskManager implements TaskManager {
         if (startNew == null || endNew == null || startExisting == null || endExisting == null) {
             return false;
         }
-        return startNew.isBefore(endExisting) && endNew.isAfter(startExisting); //newTask.start <= existingTask.end AND newTask.end >= existingTask.start
+        return startNew.isBefore(endExisting) && endNew.isAfter(startExisting);
     }
 }

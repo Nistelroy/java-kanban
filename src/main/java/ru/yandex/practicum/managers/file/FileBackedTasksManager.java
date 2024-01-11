@@ -55,21 +55,25 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         FileBackedTasksManager fileBackedTasksManager = new FileBackedTasksManager(file);
         try {
             List<String> lines = Files.readAllLines(file, StandardCharsets.UTF_8);
-            for (int i = 1; i < lines.size() - 2; i++) {
-                String[] split = lines.get(i).split(",");
-                switch (TaskType.valueOf(split[1])) {
-                    case TASK:
-                        Task task = TaskConverter.taskFromString(lines.get(i));
-                        fileBackedTasksManager.tasksMap.put(task.getId(), task);
-                        break;
-                    case EPIC:
-                        Epic epic = TaskConverter.epicFromString(lines.get(i));
-                        fileBackedTasksManager.epicMap.put(epic.getId(), epic);
-                        break;
-                    case SUBTASK:
-                        Subtask subtask = TaskConverter.subtaskFromString(lines.get(i));
-                        fileBackedTasksManager.epicMap.get(subtask.getIdEpic()).setIdSubtask(subtask.getId());
-                        fileBackedTasksManager.subtasksMap.put(subtask.getId(), subtask);
+            for (int i = 1; i < lines.size() - 1; i++) {
+                if (!(lines.get(i).isEmpty())) {
+                    String[] split = lines.get(i).split(",");
+                    switch (TaskType.valueOf(split[1])) {
+                        case TASK:
+                            Task task = TaskConverter.taskFromString(lines.get(i));
+                            fileBackedTasksManager.tasksMap.put(task.getId(), task);
+                            fileBackedTasksManager.updatePrioritizedTasks(task);
+                            break;
+                        case EPIC:
+                            Epic epic = TaskConverter.epicFromString(lines.get(i));
+                            fileBackedTasksManager.epicMap.put(epic.getId(), epic);
+                            break;
+                        case SUBTASK:
+                            Subtask subtask = TaskConverter.subtaskFromString(lines.get(i));
+                            fileBackedTasksManager.epicMap.get(subtask.getIdEpic()).setIdSubtask(subtask.getId());
+                            fileBackedTasksManager.subtasksMap.put(subtask.getId(), subtask);
+                            fileBackedTasksManager.updatePrioritizedTasks(subtask);
+                    }
                 }
             }
             if (!(lines.get(lines.size() - 1).isEmpty())) {
@@ -84,6 +88,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                     }
                 }
             }
+
         } catch (IOException e) {
             throw new ManagerSaveException("Файл data.csv не прочитался", e);
         }

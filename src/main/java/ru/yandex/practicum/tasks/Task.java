@@ -1,6 +1,7 @@
 package main.java.ru.yandex.practicum.tasks;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 public class Task {
@@ -107,10 +108,15 @@ public class Task {
         } else {
             result = result + ", description.length=null";
         }
-        return result + ", id=" + id +
+        result = result + ", id=" + id +
                 ", status='" + status + '\'' +
-                ", duration=" + duration +
-                ", startTime=" + startTime +
+                ", duration=" + duration;
+        if (startTime != null) {
+            result = result + ", startTime=" + startTime.format(DateTimeFormatter.ofPattern("HH.mm dd.MM.yyyy"));
+        } else {
+            result = result + ", startTime=null";
+        }
+        return result +
                 '}';
     }
 }

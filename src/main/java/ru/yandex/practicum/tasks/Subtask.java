@@ -1,6 +1,7 @@
 package main.java.ru.yandex.practicum.tasks;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 public class Subtask extends Task {
@@ -45,11 +46,16 @@ public class Subtask extends Task {
         } else {
             result = result + ", description.length=null";
         }
-        return result + ", id=" + getId() +
+        result = result + ", id=" + getId() +
                 ", status='" + getStatus() + '\'' +
                 ", idEpic=" + idEpic + '\'' +
-                ", duration=" + getDuration() +
-                ", startTime=" + getStartTime() +
+                ", duration=" + getDuration();
+        if (getStartTime() != null) {
+            result = result + ", startTime=" + getStartTime().format(DateTimeFormatter.ofPattern("HH.mm dd.MM.yyyy"));
+        } else {
+            result = result + ", startTime=null";
+        }
+        return result +
                 '}';
     }
 }
