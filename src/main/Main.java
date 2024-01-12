@@ -5,6 +5,7 @@ import main.java.ru.yandex.practicum.managers.file.FileBackedTasksManager;
 import main.java.ru.yandex.practicum.tasks.Epic;
 import main.java.ru.yandex.practicum.tasks.Subtask;
 import main.java.ru.yandex.practicum.tasks.Task;
+import main.java.ru.yandex.practicum.tasks.TaskStatus;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -17,23 +18,20 @@ public class Main {
         TaskManager taskManager = new FileBackedTasksManager(file);
         Epic epic = new Epic("1", "2");
         taskManager.setNewEpic(epic);
-        for (int i = 1; i < 10; i++) {
-            Task task = new Task("1" + i, "2", 30, LocalDateTime.now().plusMinutes(30 * i));
-            taskManager.setNewTask(task);
+        Subtask subtask1 = new Subtask("1" , "2", 30, LocalDateTime.now().plusMinutes(30 ), epic.getId());
+        subtask1.setStatus(TaskStatus.DONE);
+        taskManager.setNewSubtask(subtask1);
+        for (int i = 2; i < 10; i++) {
+            Subtask subtask = new Subtask("1" + i, "2", 30, LocalDateTime.now().plusMinutes(30 * i), epic.getId());
+            taskManager.setNewSubtask(subtask);
         }
-
-        for (int i = 0; i < taskManager.getPrioritizedTasks().size(); i++) {
-            System.out.println(taskManager.getPrioritizedTasks().get(i));
-        }
-        Subtask subtask = new Subtask("1", "2", 30, LocalDateTime.now().minusMinutes(400), epic.getId());
-        taskManager.setNewSubtask(subtask);
-        System.out.println();
 
         for (int i = 0; i < taskManager.getPrioritizedTasks().size(); i++) {
             System.out.println(taskManager.getPrioritizedTasks().get(i));
         }
         System.out.println(taskManager.getEpicById(epic.getId()));
-
+        taskManager.deleteAllSubtask();
+        System.out.println(taskManager.getEpicById(epic.getId()));
 
     }
 }

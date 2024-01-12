@@ -66,7 +66,6 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void testAddSubtaskCorrectSubtaskInMap() {
-        taskManager.setNewEpic(testEpic);
         taskManager.setNewSubtask(testSubtask);
 
         assertEquals(testSubtask, taskManager.getSubtaskById(testSubtask.getId()));
@@ -74,7 +73,6 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void testAddSubtaskCorrectIdSubtaskInEpic() {
-        taskManager.setNewEpic(testEpic);
         taskManager.setNewSubtask(testSubtask);
 
         assertEquals(testEpic.getIdSubtask().get(0), testSubtask.getId());
@@ -82,7 +80,6 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void testAddSubtaskCorrectIdEpicInSubtask() {
-        taskManager.setNewEpic(testEpic);
         taskManager.setNewSubtask(testSubtask);
 
         assertEquals(testEpic.getId(), taskManager.getSubtaskById(testSubtask.getId()).getIdEpic());
@@ -121,8 +118,6 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void testUpdateEpicCorrectEpicInMap() {
-        taskManager.setNewEpic(testEpic);
-
         Epic newEpic = new Epic("Имя", "Описание");
         newEpic.setId(testEpic.getId());
         taskManager.updateEpicInMap(newEpic);
@@ -132,7 +127,6 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void testUpdateSubtaskCorrectSubtaskInMap() {
-        taskManager.setNewEpic(testEpic);
         taskManager.setNewSubtask(testSubtask);
 
         Subtask newSubtask = new Subtask("Имя", "Описание", ANY_DURATION, LocalDateTime.now().plusMinutes(ANY_DURATION), testEpic.getId());
@@ -144,7 +138,6 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void testUpdateSubtaskStatusDoneInEpicStatusDone() {
-        taskManager.setNewEpic(testEpic);
         taskManager.setNewSubtask(testSubtask);
 
         Subtask newSubtask = new Subtask("Имя", "Описание", ANY_DURATION, LocalDateTime.now().plusMinutes(ANY_DURATION), testEpic.getId());
@@ -165,7 +158,6 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void testDeleteEpicInMapAbsent() {
-        taskManager.setNewEpic(testEpic);
         taskManager.deleteEpicById(testEpic.getId());
 
         assertNull(taskManager.getEpicById(testEpic.getId()));
@@ -173,7 +165,6 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void testDeleteEpicInMapSubtaskAlsoDelete() {
-        taskManager.setNewEpic(testEpic);
         taskManager.setNewSubtask(testSubtask);
         taskManager.deleteEpicById(testEpic.getId());
 
@@ -182,7 +173,6 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void testDeleteSubtaskInMapAbsent() {
-        taskManager.setNewEpic(testEpic);
         taskManager.setNewSubtask(testSubtask);
         taskManager.deleteSubtaskById(testSubtask.getId());
 
@@ -191,7 +181,6 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void testDeleteSubtaskIdInEpicAlsoDelete() {
-        taskManager.setNewEpic(testEpic);
         taskManager.setNewSubtask(testSubtask);
         taskManager.deleteSubtaskById(testSubtask.getId());
 
@@ -200,7 +189,6 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void testDeleteSubtaskStatusDoneEpicStatusNew() {
-        taskManager.setNewEpic(testEpic);
         taskManager.setNewSubtask(testSubtask);
         testSubtask.setStatus(TaskStatus.IN_PROGRESS);
         taskManager.updateSubtaskInMap(testSubtask);
@@ -212,7 +200,6 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void testGetAllSubtaskFromEpicByIdAddTaskReturnList() {
-        taskManager.setNewEpic(testEpic);
         taskManager.setNewSubtask(testSubtask);
 
         assertEquals(ONE_TASK_IN_LIST, testEpic.getIdSubtask().size());
@@ -220,8 +207,6 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void testGetAllSubtaskFromEpicByIdReturnClearList() {
-        taskManager.setNewEpic(testEpic);
-
         assertEquals(ZERO_TASK_IN_LIST, testEpic.getIdSubtask().size());
     }
 
@@ -234,26 +219,22 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void testGetAllTaskReturnListNoContTask() {
-
         assertFalse(taskManager.getAllTask().contains(testTask));
     }
 
     @Test
     void testGetAllEpicAddEpicReturnListContEpic() {
-        taskManager.setNewEpic(testEpic);
-
         assertTrue(taskManager.getAllEpic().contains(testEpic));
     }
 
     @Test
     void testGetAllEpicReturnListNoContEpic() {
-
+        taskManager.deleteEpicById(testEpic.getId());
         assertFalse(taskManager.getAllEpic().contains(testEpic));
     }
 
     @Test
     void testGetAllSubtaskAddSubtaskReturnListContSubtask() {
-        taskManager.setNewEpic(testEpic);
         taskManager.setNewSubtask(testSubtask);
 
         assertTrue(taskManager.getAllSubtask().contains(testSubtask));
@@ -261,14 +242,11 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void testGetAllSubtaskReturnListNoContSubtask() {
-        taskManager.setNewEpic(testEpic);
-
         assertFalse(taskManager.getAllSubtask().contains(testSubtask));
     }
 
     @Test
     void testDeleteAllSubtaskInMapAbsent() {
-        taskManager.setNewEpic(testEpic);
         taskManager.setNewSubtask(testSubtask);
         Subtask subtaskTwo = new Subtask("Имя", "Описание", ANY_DURATION, LocalDateTime.now().plusMinutes(ANY_DURATION), testEpic.getId());
         taskManager.setNewSubtask(subtaskTwo);
@@ -291,7 +269,6 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void testDeleteAllEpicInMapAbsent() {
-        taskManager.setNewEpic(testEpic);
         Epic testEpicTwo = new Epic("Имя", "Описание");
         taskManager.setNewEpic(testEpicTwo);
 
@@ -415,7 +392,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     private void getTasksForTests() {
         testTask = new Task("Имя", "Описание", ANY_DURATION, LocalDateTime.now());
         testEpic = new Epic("Имя", "Описание");
-        testEpic.setId(1);
+        taskManager.setNewEpic(testEpic);
         testSubtask = new Subtask("Имя", "Описание", ANY_DURATION, LocalDateTime.now(), testEpic.getId());
     }
 }

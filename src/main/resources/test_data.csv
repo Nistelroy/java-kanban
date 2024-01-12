@@ -4,5 +4,6 @@ id,type,name,status,description,epic,duration,start_time
 3,EPIC,Имя,NEW,Описание,0,
 4,EPIC,Имя,NEW,Описание,0,
 5,EPIC,Имя,NEW,Описание,0,
+6,EPIC,Имя,NEW,Описание,0,
 
-1,2,3,4,5
+2,3,4,5,6

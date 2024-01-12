@@ -137,7 +137,6 @@ public class InMemoryTaskManager implements TaskManager {
             }
             epicMap.remove(id);
             historyManager.remove(id);
-            prioritizedTasks.remove(epic);
         }
     }
 
@@ -197,7 +196,6 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void deleteAllEpic() {
         for (Epic epic : epicMap.values()) {
-            prioritizedTasks.remove(epic);
             historyManager.remove(epic.getId());
         }
         for (Subtask subtask : subtasksMap.values()) {
@@ -216,7 +214,8 @@ public class InMemoryTaskManager implements TaskManager {
         }
         for (Epic thisEpic : epicMap.values()) {
             thisEpic.removeAllSubtasksInEpic();
-            thisEpic.setStatus(TaskStatus.NEW);
+            statusEpicChanger(thisEpic);
+            updateEpicDurationAndTime(thisEpic);
         }
         subtasksMap.clear();
     }
