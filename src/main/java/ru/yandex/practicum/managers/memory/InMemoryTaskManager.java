@@ -18,9 +18,9 @@ import java.util.TreeSet;
 
 public class InMemoryTaskManager implements TaskManager {
     private int idForNewTask;
-    public final Map<Integer, Task> tasksMap = new HashMap<>();
-    public final Map<Integer, Epic> epicMap = new HashMap<>();
-    public final Map<Integer, Subtask> subtasksMap = new HashMap<>();
+    protected final Map<Integer, Task> tasksMap = new HashMap<>();
+    protected final Map<Integer, Epic> epicMap = new HashMap<>();
+    protected final Map<Integer, Subtask> subtasksMap = new HashMap<>();
     protected final HistoryManager historyManager = Managers.getDefaultHistory();
     protected final TreeSet<Task> prioritizedTasks = new TreeSet<>((o1, o2) -> {
         if (o1.getStartTime() != null && o2.getStartTime() != null) {
