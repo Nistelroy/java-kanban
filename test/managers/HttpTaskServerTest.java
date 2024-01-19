@@ -21,6 +21,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -30,7 +31,6 @@ public class HttpTaskServerTest {
     private TaskManager taskManager;
     private HttpTaskServer httpTaskServer;
     public static final int INCORRECT_ID = 100;
-    public static final int ZERO_TASK_IN_LIST = 0;
     public static final int ONE_TASK_IN_LIST = 1;
     public static final int TWO_TASKS_IN_LIST = 2;
     public static final int ANY_DURATION = 30;
@@ -305,7 +305,6 @@ public class HttpTaskServerTest {
         assertEquals(updateSubtask.getName(), taskManager.getSubtaskById(2).getName());
     }
 
-
     @Test
     public void testGetTasksListReturnCorrectList() {
         taskManager.setNewTask(testTask);
@@ -373,6 +372,49 @@ public class HttpTaskServerTest {
 
         assertEquals(200, response.statusCode());
         assertEquals(taskManager.getAllSubtask(), subtasksList);
+    }
+
+    @Test
+    public void testGetHistoryReturnCorrectHistory() {
+        taskManager.getEpicById(1);
+        taskManager.setNewTask(testTask);
+        taskManager.getTaskById(2);
+
+        URI uri = URI.create("http://localhost:8080/tasks/history");
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(uri)
+                .GET()
+                .build();
+
+        try {
+            response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+        } catch (IOException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        List<Task> historyInServer = gson.fromJson(response.body(), new TypeToken<ArrayList<Task>>() {}.getType());
+
+        assertEquals(TWO_TASKS_IN_LIST, historyInServer.size());
+    }
+
+    @Test
+    public void testGetPrioritizedReturnCorrectPrioritized() {
+        taskManager.setNewTask(testTask);
+
+        URI uri = URI.create("http://localhost:8080/tasks");
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(uri)
+                .GET()
+                .build();
+
+        try {
+            response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+        } catch (IOException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        List<Task> prioritizedTasks = gson.fromJson(response.body(), new TypeToken<ArrayList<Task>>() {}.getType());
+
+        assertEquals(ONE_TASK_IN_LIST, prioritizedTasks.size());
     }
 
     @AfterEach
