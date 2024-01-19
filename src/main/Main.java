@@ -1,37 +1,47 @@
 package main;
 
+import main.java.ru.yandex.practicum.managers.Managers;
 import main.java.ru.yandex.practicum.managers.TaskManager;
-import main.java.ru.yandex.practicum.managers.file.FileBackedTasksManager;
+import main.java.ru.yandex.practicum.managers.http.HttpTaskServer;
+import main.java.ru.yandex.practicum.managers.http.KVServer;
 import main.java.ru.yandex.practicum.tasks.Epic;
-import main.java.ru.yandex.practicum.tasks.Subtask;
-import main.java.ru.yandex.practicum.tasks.TaskStatus;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.LocalDateTime;
 
 public class Main {
     public static final Path file = Paths.get("src/main/resources/data.csv");
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException, InterruptedException {
+//        KVServer kvServer = new KVServer();
+//        kvServer.start();
+//        TaskManager taskManager = Managers.getDefault();
+//        HttpTaskServer httpTaskServer = new HttpTaskServer(taskManager);
+//        httpTaskServer.start();
+//        taskManager.setNewTask(new Task("Имя", "Описание", 30, LocalDateTime.now()));
 
-        TaskManager taskManager = new FileBackedTasksManager(file);
-        Epic epic = new Epic("1", "2");
-        taskManager.setNewEpic(epic);
-        Subtask subtask1 = new Subtask("1", "2", 30, LocalDateTime.now().plusMinutes(30), epic.getId());
-        subtask1.setStatus(TaskStatus.DONE);
-        taskManager.setNewSubtask(subtask1);
-        for (int i = 2; i < 10; i++) {
-            Subtask subtask = new Subtask("1" + i, "2", 30, LocalDateTime.now().plusMinutes(30 * i), epic.getId());
-            taskManager.setNewSubtask(subtask);
-        }
 
-        for (int i = 0; i < taskManager.getPrioritizedTasks().size(); i++) {
-            System.out.println(taskManager.getPrioritizedTasks().get(i));
-        }
-        System.out.println(taskManager.getEpicById(epic.getId()));
-        taskManager.deleteAllSubtask();
-        System.out.println(taskManager.getEpicById(epic.getId()));
+        KVServer kvServer = new KVServer();
+        kvServer.start();
+        TaskManager taskManager = Managers.getDefault();
+        HttpTaskServer httpTaskServer = new HttpTaskServer(taskManager);
+        httpTaskServer.start();
+       Epic testEpic = new Epic("Имя", "Описание");
+        taskManager.setNewEpic(testEpic);
 
+
+
+
+//        TaskManager taskManager = Managers.getDefault("http://localhost:8078");
+//
+//        HttpClient client = HttpClient.newHttpClient();
+//        URI url = URI.create("http://localhost:8080/tasks/task/");
+//        HttpRequest request = HttpRequest.newBuilder()
+//                .uri(url)
+//                .GET()
+//                .build();
+//        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+//        System.out.println(response.body());
     }
 }

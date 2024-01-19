@@ -27,9 +27,9 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     public static final int TWO_TASKS_IN_LIST = 2;
     public static final int ANY_DURATION = 30;
     protected T taskManager;
-    private Task testTask;
-    private Epic testEpic;
-    private Subtask testSubtask;
+    protected Task testTask;
+    protected Epic testEpic;
+    protected Subtask testSubtask;
 
     protected abstract T createTaskManager();
 
@@ -389,11 +389,11 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         assertTrue(actualMessage.contains(expectedMessage));
     }
 
-    private void getTasksForTests() {
+    protected void getTasksForTests() {
         testTask = new Task("Имя", "Описание", ANY_DURATION, LocalDateTime.now());
         testEpic = new Epic("Имя", "Описание");
         taskManager.setNewEpic(testEpic);
-        testSubtask = new Subtask("Имя", "Описание", ANY_DURATION, LocalDateTime.now(), testEpic.getId());
+        testSubtask = new Subtask("Имя", "Описание", ANY_DURATION, LocalDateTime.now().plusMinutes(ANY_DURATION*3), testEpic.getId());
     }
 }
 

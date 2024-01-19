@@ -14,13 +14,8 @@ import java.io.OutputStream;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 
-import static main.java.ru.yandex.practicum.tasks.TaskType.EPIC;
-import static main.java.ru.yandex.practicum.tasks.TaskType.SUBTASK;
-import static main.java.ru.yandex.practicum.tasks.TaskType.TASK;
-
 
 public class TaskHandler implements HttpHandler {
-    private static final String HISTORY = "history";
     private final TaskManager taskManager;
     private final Gson gson = new GsonBuilder()
             .setPrettyPrinting()
@@ -33,48 +28,64 @@ public class TaskHandler implements HttpHandler {
 
     @Override
     public void handle(HttpExchange h) throws IOException {
-        String methodRequest = h.getRequestMethod();
-        URI requestURI = h.getRequestURI();
-        String path = requestURI.getPath();
+        String metodRequest = h.getRequestMethod();
+        URI requestURL = h.getRequestURI();
+        String path = requestURL.getPath();
         String[] splitPath = path.split("/");
 
-        if (splitPath.length == 2 && methodRequest.equals("GET")) {
+        if (splitPath.length == 2 && metodRequest.equals("GET")) {
             handleGetPriorList(h);
         }
-        switch (methodRequest) {
+        switch (metodRequest) {
             case "POST":
-                if (splitPath[2].equals(TASK.toString())) {
-                    handleSetOrUpdateTask(h);
-                } else if (splitPath[2].equals(EPIC.toString())) {
-                    handleSetOrUpdateEpic(h);
-                } else if (splitPath[2].equals(SUBTASK.toString())) {
-                    handleSetOrUpdateSubtask(h);
-                } else {
-                    output(h, "Страница не найдена", 404);
+                switch (splitPath[2]) {
+                    case "task":
+                        handleSetOrUpdateTask(h);
+                        break;
+                    case "epic":
+                        handleSetOrUpdateEpic(h);
+                        break;
+                    case "subtask":
+                        handleSetOrUpdateSubtask(h);
+                        break;
+                    default:
+                        output(h, "Страница не найдена", 404);
+                        break;
                 }
                 break;
             case "GET":
-                if (splitPath[2].equals(TASK.toString())) {
-                    handleGetTaskInMap(h);
-                } else if (splitPath[2].equals(EPIC.toString())) {
-                    handleGetEpicInMap(h);
-                } else if (splitPath[2].equals(SUBTASK.toString())) {
-                    handleGetSubtaskInMap(h);
-                } else if (splitPath[2].equals(HISTORY)) {
-                    handleGetHistoryList(h);
-                } else {
-                    output(h, "Страница не найдена", 404);
+                switch (splitPath[2]) {
+                    case "task":
+                        handleGetTaskInMap(h);
+                        break;
+                    case "epic":
+                        handleGetEpicInMap(h);
+                        break;
+                    case "subtask":
+                        handleGetSubtaskInMap(h);
+                        break;
+                    case "history":
+                        handleGetHistoryList(h);
+                        break;
+                    default:
+                        output(h, "Страница не найдена", 404);
+                        break;
                 }
                 break;
             case "DELETE":
-                if (splitPath[2].equals(TASK.toString())) {
-                    handleDeleteTask(h);
-                } else if (splitPath[2].equals(EPIC.toString())) {
-                    handleDeleteEpic(h);
-                } else if (splitPath[2].equals(SUBTASK.toString())) {
-                    handleDeleteSubTask(h);
-                } else {
-                    output(h, "Страница не найдена", 404);
+                switch (splitPath[2]) {
+                    case "task":
+                        handleDeleteTask(h);
+                        break;
+                    case "epic":
+                        handleDeleteEpic(h);
+                        break;
+                    case "subtask":
+                        handleDeleteSubTask(h);
+                        break;
+                    default:
+                        output(h, "Страница не найдена", 404);
+                        break;
                 }
                 break;
             default:
@@ -84,9 +95,9 @@ public class TaskHandler implements HttpHandler {
 
     public void handleGetTaskInMap(HttpExchange h) throws IOException {
         if (h.getRequestURI().getQuery() != null) {
-            int idTask = getId(h);
-            if (taskManager.getTaskById(idTask) != null) {
-                Task task = taskManager.getTaskById(idTask);
+            int taskId = getId(h);
+            if (taskManager.getTaskById(taskId) != null) {
+                Task task = taskManager.getTaskById(taskId);
                 output(h, gson.toJson(task), 200);
             } else {
                 output(h, "Таска не найдена", 404);
@@ -102,9 +113,9 @@ public class TaskHandler implements HttpHandler {
 
     public void handleGetEpicInMap(HttpExchange h) throws IOException {
         if (h.getRequestURI().getQuery() != null) {
-            int idEpic = getId(h);
-            if (taskManager.getEpicById(idEpic) != null) {
-                Epic epic = taskManager.getEpicById(idEpic);
+            int epicId = getId(h);
+            if (taskManager.getEpicById(epicId) != null) {
+                Epic epic = taskManager.getEpicById(epicId);
                 output(h, gson.toJson(epic), 200);
             } else {
                 output(h, "Эпик не найден", 404);
@@ -120,10 +131,10 @@ public class TaskHandler implements HttpHandler {
 
     public void handleGetSubtaskInMap(HttpExchange h) throws IOException {
         if (h.getRequestURI().getQuery() != null) {
-            int idSubtask = getId(h);
-            if (taskManager.getSubtaskById(idSubtask) != null) {
-                Subtask subTask = taskManager.getSubtaskById(idSubtask);
-                output(h, gson.toJson(subTask), 200);
+            int subtaskId = getId(h);
+            if (taskManager.getSubtaskById(subtaskId) != null) {
+                Subtask subtask = taskManager.getSubtaskById(subtaskId);
+                output(h, gson.toJson(subtask), 200);
             } else {
                 output(h, "Сабтаска не найдена", 404);
             }
@@ -143,17 +154,12 @@ public class TaskHandler implements HttpHandler {
             return;
         }
         Task task = gson.fromJson(body, Task.class);
-        Integer idTask = task.getId();
-        if (idTask == null) {
+        if (taskManager.getTaskById(task.getId()) != null) {
+            taskManager.updateTaskInMap(task);
+            output(h, "Обновили таску", 200);
+        } else {
             taskManager.setNewTask(task);
             output(h, "Создали новую таску", 200);
-        } else {
-            if (taskManager.getTaskById(idTask) != null) {
-                taskManager.updateTaskInMap(task);
-                output(h, "Обновили таску", 200);
-            } else {
-                output(h, "Для создания новой такски, она должна быть без id", 404);
-            }
         }
     }
 
@@ -164,17 +170,12 @@ public class TaskHandler implements HttpHandler {
             return;
         }
         Epic epic = gson.fromJson(body, Epic.class);
-        Integer idEpic = epic.getId();
-        if (idEpic == null) {
+        if (taskManager.getEpicById(epic.getId()) != null) {
+            taskManager.updateEpicInMap(epic);
+            output(h, "Обновили эпик", 200);
+        } else {
             taskManager.setNewEpic(epic);
             output(h, "Создали новый эпик", 200);
-        } else {
-            if (taskManager.getEpicById(idEpic) != null) {
-                taskManager.updateEpicInMap(epic);
-                output(h, "Обновили эпик", 200);
-            } else {
-                output(h, "Для создания нового эпика, она должна быть без id", 404);
-            }
         }
     }
 
@@ -185,30 +186,21 @@ public class TaskHandler implements HttpHandler {
             return;
         }
         Subtask subtask = gson.fromJson(body, Subtask.class);
-        Integer idSubtask = subtask.getId();
-        int idEpic = subtask.getIdEpic();
-        if (idSubtask == null) {
-            if (taskManager.getEpicById(idEpic) != null) {
-                taskManager.setNewSubtask(subtask);
-                output(h, "Создали новую сабтаску", 200);
-            } else {
-                output(h, "Эпика для сабтаски нет", 404);
-            }
+        if (taskManager.getSubtaskById(subtask.getId()) != null) {
+            taskManager.updateSubtaskInMap(subtask);
+            output(h, "Обновили сабтаску", 200);
         } else {
-            if (taskManager.getSubtaskById(idSubtask) != null) {
-                taskManager.updateSubtaskInMap(subtask);
-                output(h, "Обновили сабтаску", 200);
-            } else {
-                output(h, "Для создания новой сабтаски, она должна быть без id", 404);
-            }
+            taskManager.setNewSubtask(subtask);
+            output(h, "Создали новую сабтаску", 200);
         }
     }
 
+
     public void handleDeleteTask(HttpExchange h) throws IOException {
         if (h.getRequestURI().getQuery() != null) {
-            int idTask = getId(h);
-            if (taskManager.getTaskById(idTask) != null) {
-                taskManager.deleteTaskById(idTask);
+            int taskId = getId(h);
+            if (taskManager.getTaskById(taskId) != null) {
+                taskManager.deleteTaskById(taskId);
                 output(h, "Удалили таску", 200);
             } else {
                 output(h, "Таска для удаления не найдена", 404);
@@ -220,9 +212,9 @@ public class TaskHandler implements HttpHandler {
 
     public void handleDeleteEpic(HttpExchange h) throws IOException {
         if (h.getRequestURI().getQuery() != null) {
-            int idEpic = getId(h);
-            if (taskManager.getEpicById(idEpic) != null) {
-                taskManager.deleteEpicById(idEpic);
+            int epicId = getId(h);
+            if (taskManager.getEpicById(epicId) != null) {
+                taskManager.deleteEpicById(epicId);
                 output(h, "Удалили эпик", 200);
             } else {
                 output(h, "Эпик для удаления не найден", 404);
@@ -234,9 +226,9 @@ public class TaskHandler implements HttpHandler {
 
     public void handleDeleteSubTask(HttpExchange h) throws IOException {
         if (h.getRequestURI().getQuery() != null) {
-            int idSubtask = getId(h);
-            if (taskManager.getSubtaskById(idSubtask) != null) {
-                taskManager.deleteSubtaskById(idSubtask);
+            int subtaskId = getId(h);
+            if (taskManager.getSubtaskById(subtaskId) != null) {
+                taskManager.deleteSubtaskById(subtaskId);
                 output(h, "Удалили субтаску", 200);
             } else {
                 output(h, "Субтаска для удаления не найдена", 404);
@@ -282,11 +274,9 @@ public class TaskHandler implements HttpHandler {
     }
 
     private int getId(HttpExchange h) {
-        return Integer.parseInt
-                (h
-                        .getRequestURI()
-                        .toString()
-                        .split("\\?")[1]
-                        .split("=")[1]);
+        return Integer.parseInt(h.getRequestURI()
+                .toString()
+                .split("\\?")[1]
+                .split("=")[1]);
     }
 }
