@@ -30,7 +30,6 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     protected Task testTask;
     protected Epic testEpic;
     protected Subtask testSubtask;
-
     protected abstract T createTaskManager();
 
     @BeforeEach
@@ -393,7 +392,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         testTask = new Task("Имя", "Описание", ANY_DURATION, LocalDateTime.now());
         testEpic = new Epic("Имя", "Описание");
         taskManager.setNewEpic(testEpic);
-        testSubtask = new Subtask("Имя", "Описание", ANY_DURATION, LocalDateTime.now().plusMinutes(ANY_DURATION*3), testEpic.getId());
+        testSubtask = new Subtask("Имя", "Описание", ANY_DURATION, LocalDateTime.now().plusMinutes(ANY_DURATION * 3), testEpic.getId());
     }
 }
 

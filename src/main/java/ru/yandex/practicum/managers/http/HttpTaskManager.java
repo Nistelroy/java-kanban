@@ -50,7 +50,8 @@ public class HttpTaskManager extends FileBackedTasksManager {
 
     private void loadingServer() {
         String jsonTasks = kvTaskClient.load("tasks");
-        ArrayList<Task> taskList = gson.fromJson(jsonTasks, new TypeToken<ArrayList<Task>>() {}.getType());
+        ArrayList<Task> taskList = gson.fromJson(jsonTasks, new TypeToken<ArrayList<Task>>() {
+        }.getType());
 
         for (Task task : taskList) {
             tasksMap.put(task.getId(), task);
@@ -58,14 +59,16 @@ public class HttpTaskManager extends FileBackedTasksManager {
         }
 
         String jsonEpics = kvTaskClient.load("epics");
-        ArrayList<Epic> epicList = gson.fromJson(jsonEpics, new TypeToken<ArrayList<Epic>>() {}.getType());
+        ArrayList<Epic> epicList = gson.fromJson(jsonEpics, new TypeToken<ArrayList<Epic>>() {
+        }.getType());
 
         for (Epic epic : epicList) {
             epicMap.put(epic.getId(), epic);
         }
 
         String jsonSubtasks = kvTaskClient.load("subtasks");
-        ArrayList<Subtask> subtaskList = gson.fromJson(jsonSubtasks, new TypeToken<ArrayList<Subtask>>() {}.getType());
+        ArrayList<Subtask> subtaskList = gson.fromJson(jsonSubtasks, new TypeToken<ArrayList<Subtask>>() {
+        }.getType());
 
         for (Subtask subtask : subtaskList) {
             Epic epic = epicMap.get(subtask.getIdEpic());
@@ -77,7 +80,8 @@ public class HttpTaskManager extends FileBackedTasksManager {
         }
 
         String jsonHistory = kvTaskClient.load("history");
-        ArrayList<Integer> taskHistoryIds = gson.fromJson(jsonHistory, new TypeToken<ArrayList<Integer>>() {}.getType());
+        ArrayList<Integer> taskHistoryIds = gson.fromJson(jsonHistory, new TypeToken<ArrayList<Integer>>() {
+        }.getType());
         Collections.reverse(taskHistoryIds);
 
         for (Integer id : taskHistoryIds) {

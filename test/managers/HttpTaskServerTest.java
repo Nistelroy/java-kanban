@@ -391,7 +391,8 @@ public class HttpTaskServerTest {
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
         }
-        List<Task> historyInServer = gson.fromJson(response.body(), new TypeToken<ArrayList<Task>>() {}.getType());
+        List<Task> historyInServer = gson.fromJson(response.body(), new TypeToken<ArrayList<Task>>() {
+        }.getType());
 
         assertEquals(TWO_TASKS_IN_LIST, historyInServer.size());
     }
@@ -412,7 +413,8 @@ public class HttpTaskServerTest {
             throw new RuntimeException(e);
         }
 
-        List<Task> prioritizedTasks = gson.fromJson(response.body(), new TypeToken<ArrayList<Task>>() {}.getType());
+        List<Task> prioritizedTasks = gson.fromJson(response.body(), new TypeToken<ArrayList<Task>>() {
+        }.getType());
 
         assertEquals(ONE_TASK_IN_LIST, prioritizedTasks.size());
     }

@@ -16,7 +16,6 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksM
 
     @Test
     void testHistoryBackUpInFileClearHistory() {
-
         Epic epic = new Epic("Имя", "Описание");
         taskManager.setNewEpic(epic);
 
