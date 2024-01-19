@@ -64,8 +64,8 @@ public class HttpTaskManager extends FileBackedTasksManager {
             epicMap.put(epic.getId(), epic);
         }
 
-        String jsonSubTasks = kvTaskClient.load("subtasks");
-        ArrayList<Subtask> subtaskList = gson.fromJson(jsonSubTasks, new TypeToken<ArrayList<Subtask>>() {}.getType());
+        String jsonSubtasks = kvTaskClient.load("subtasks");
+        ArrayList<Subtask> subtaskList = gson.fromJson(jsonSubtasks, new TypeToken<ArrayList<Subtask>>() {}.getType());
 
         for (Subtask subtask : subtaskList) {
             Epic epic = epicMap.get(subtask.getIdEpic());
@@ -76,7 +76,7 @@ public class HttpTaskManager extends FileBackedTasksManager {
             updateEpicDurationAndTime(epic);
         }
 
-        String jsonHistory = this.kvTaskClient.load("history");
+        String jsonHistory = kvTaskClient.load("history");
         ArrayList<Integer> taskHistoryIds = gson.fromJson(jsonHistory, new TypeToken<ArrayList<Integer>>() {}.getType());
         Collections.reverse(taskHistoryIds);
 
