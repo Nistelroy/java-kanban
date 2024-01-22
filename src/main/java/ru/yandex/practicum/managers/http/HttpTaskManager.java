@@ -7,8 +7,6 @@ import main.java.ru.yandex.practicum.tasks.Epic;
 import main.java.ru.yandex.practicum.tasks.Subtask;
 import main.java.ru.yandex.practicum.tasks.Task;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.stream.Collectors;
@@ -17,18 +15,17 @@ import java.util.stream.Collectors;
 public class HttpTaskManager extends FileBackedTasksManager {
     private final KVTaskClient kvTaskClient;
     private final Gson gson = new Gson();
-    public static final Path file = Paths.get("src/main/resources/data.csv");
 
     public HttpTaskManager(String url) {
-        super(file);
-        kvTaskClient = new KVTaskClient(url);
-
+        this(url, false);
     }
 
-    public HttpTaskManager(String url, String anyfing) {
-        super(file);
+    public HttpTaskManager(String url, boolean start) {
+        super(null);
         kvTaskClient = new KVTaskClient(url);
-        loadingServer();
+        if (start) {
+            loadingServer();
+        }
     }
 
     @Override

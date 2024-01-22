@@ -1,5 +1,7 @@
 package main.java.ru.yandex.practicum.managers.http;
 
+import main.java.ru.yandex.practicum.managers.exception.HttpResponseException;
+
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -12,24 +14,27 @@ public class KVTaskClient {
     private final HttpResponse.BodyHandler<String> stringBodyHandler = HttpResponse.BodyHandlers.ofString();
     private HttpRequest httpRequest;
     private HttpResponse<String> httpResponse;
-    private final String URL;
-    private final String API_TOKEN;
+    private final String url;
+    private final String apiToken;
 
     public KVTaskClient(String url) {
-        this.URL = url;
-        this.API_TOKEN = register();
+        this.url = url;
+        this.apiToken = register();
     }
 
     public String register() {
         httpRequest = requestBuilder
-                .uri(URI.create(URL + "/register"))
+                .uri(URI.create(url + "/register"))
                 .GET()
                 .build();
 
         try {
             httpResponse = httpClient.send(httpRequest, stringBodyHandler);
+            if (httpResponse.statusCode() != 200) {
+                throw new HttpResponseException("Сервер вернул не код 200");
+            }
         } catch (IOException | InterruptedException e) {
-            throw new RuntimeException();
+            throw new HttpResponseException("Ошибка регистрации");
         }
 
         return httpResponse.body();
@@ -37,14 +42,14 @@ public class KVTaskClient {
 
     public String load(String key) {
         httpRequest = requestBuilder
-                .uri(URI.create(URL + "/load/" + key + "?API_TOKEN=" + API_TOKEN))
+                .uri(URI.create(url + "/load/" + key + "?API_TOKEN=" + apiToken))
                 .GET()
                 .build();
 
         try {
             httpResponse = httpClient.send(httpRequest, stringBodyHandler);
         } catch (IOException | InterruptedException e) {
-            throw new RuntimeException(e);
+            throw new HttpResponseException("Ошибка выгрузки");
         }
 
         return httpResponse.body();
@@ -53,14 +58,14 @@ public class KVTaskClient {
     public void put(String key, String json) {
         HttpRequest.BodyPublisher body = HttpRequest.BodyPublishers.ofString(json);
         httpRequest = requestBuilder
-                .uri(URI.create(URL + "/save/" + key + "?API_TOKEN=" + API_TOKEN))
+                .uri(URI.create(url + "/save/" + key + "?API_TOKEN=" + apiToken))
                 .POST(body)
                 .build();
 
         try {
             httpResponse = httpClient.send(httpRequest, stringBodyHandler);
         } catch (IOException | InterruptedException e) {
-            throw new RuntimeException();
+            throw new HttpResponseException("Ошибка загрузки");
         }
     }
 }

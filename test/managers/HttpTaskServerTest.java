@@ -10,7 +10,9 @@ import main.java.ru.yandex.practicum.managers.http.KVServer;
 import main.java.ru.yandex.practicum.tasks.Epic;
 import main.java.ru.yandex.practicum.tasks.Subtask;
 import main.java.ru.yandex.practicum.tasks.Task;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -27,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class HttpTaskServerTest {
     private final Gson gson = new GsonBuilder().setPrettyPrinting().serializeNulls().create();
-    private KVServer kvServer;
+    private static KVServer kvServer;
     private TaskManager taskManager;
     private HttpTaskServer httpTaskServer;
     public static final int INCORRECT_ID = 100;
@@ -38,17 +40,21 @@ public class HttpTaskServerTest {
     private Epic testEpic;
     private Subtask testSubtask;
     private HttpResponse<String> response;
-    private HttpClient httpClient;
+    private static HttpClient httpClient;
+
+    @BeforeAll
+    static void beforeAll() throws IOException {
+        kvServer = new KVServer();
+        kvServer.start();
+        httpClient = HttpClient.newHttpClient();
+    }
 
     @BeforeEach
     void setUp() {
         try {
-            kvServer = new KVServer();
-            kvServer.start();
             taskManager = Managers.getDefault();
             httpTaskServer = new HttpTaskServer(taskManager);
             httpTaskServer.start();
-            httpClient = HttpClient.newHttpClient();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -56,7 +62,7 @@ public class HttpTaskServerTest {
     }
 
     @Test
-    public void testGetEpicIn1IdReturnCorrectEpic() {
+    public void testGetEpicIn1IdReturnCorrectEpic() throws IOException, InterruptedException {
         URI url = URI.create("http://localhost:8080/tasks/epic/?id=1");
         HttpRequest request = HttpRequest
                 .newBuilder()
@@ -64,11 +70,8 @@ public class HttpTaskServerTest {
                 .GET()
                 .build();
 
-        try {
-            response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-        } catch (IOException | InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+        response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+
         Epic epicInServer = gson.fromJson(response.body(), Epic.class);
 
         assertEquals(200, response.statusCode());
@@ -76,7 +79,7 @@ public class HttpTaskServerTest {
     }
 
     @Test
-    public void testGetEpicIncorrectIdReturn404() {
+    public void testGetEpicIncorrectIdReturn404() throws IOException, InterruptedException {
         URI url = URI.create("http://localhost:8080/tasks/epic/?id=" + INCORRECT_ID);
         HttpRequest request = HttpRequest
                 .newBuilder()
@@ -84,17 +87,13 @@ public class HttpTaskServerTest {
                 .GET()
                 .build();
 
-        try {
-            response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-        } catch (IOException | InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+        response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
         assertEquals(404, response.statusCode());
     }
 
     @Test
-    public void testGetTaskIn2IdReturnCorrectTask() {
+    public void testGetTaskIn2IdReturnCorrectTask() throws IOException, InterruptedException {
         taskManager.setNewTask(testTask);
 
         URI url = URI.create("http://localhost:8080/tasks/task/?id=2");
@@ -104,11 +103,8 @@ public class HttpTaskServerTest {
                 .GET()
                 .build();
 
-        try {
-            response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-        } catch (IOException | InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+        response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+
         Task taskInServer = gson.fromJson(response.body(), Task.class);
 
         assertEquals(200, response.statusCode());
@@ -116,7 +112,7 @@ public class HttpTaskServerTest {
     }
 
     @Test
-    public void testGetTaskIncorrectIdReturn404() {
+    public void testGetTaskIncorrectIdReturn404() throws IOException, InterruptedException {
 
         URI url = URI.create("http://localhost:8080/tasks/task/?id=" + INCORRECT_ID);
         HttpRequest request = HttpRequest
@@ -125,17 +121,13 @@ public class HttpTaskServerTest {
                 .GET()
                 .build();
 
-        try {
-            response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-        } catch (IOException | InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+        response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
         assertEquals(404, response.statusCode());
     }
 
     @Test
-    public void testGetSubtaskIn2IdReturnCorrectSubtask() {
+    public void testGetSubtaskIn2IdReturnCorrectSubtask() throws IOException, InterruptedException {
         taskManager.setNewSubtask(testSubtask);
 
         URI url = URI.create("http://localhost:8080/tasks/subtask/?id=2");
@@ -145,11 +137,8 @@ public class HttpTaskServerTest {
                 .GET()
                 .build();
 
-        try {
-            response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-        } catch (IOException | InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+        response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+
         Subtask subtaskInServer = gson.fromJson(response.body(), Subtask.class);
 
         assertEquals(200, response.statusCode());
@@ -157,7 +146,7 @@ public class HttpTaskServerTest {
     }
 
     @Test
-    public void testGetSubtaskIncorrectIdReturn404() {
+    public void testGetSubtaskIncorrectIdReturn404() throws IOException, InterruptedException {
         URI url = URI.create("http://localhost:8080/tasks/subtask/?id=" + INCORRECT_ID);
         HttpRequest request = HttpRequest
                 .newBuilder()
@@ -165,17 +154,13 @@ public class HttpTaskServerTest {
                 .GET()
                 .build();
 
-        try {
-            response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-        } catch (IOException | InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+        response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
         assertEquals(404, response.statusCode());
     }
 
     @Test
-    public void testPostNewTaskReturn200() {
+    public void testPostNewTaskReturn200() throws IOException, InterruptedException {
         Task testTaskTwo = new Task("Имя для теста", "Описание", ANY_DURATION, LocalDateTime.now().plusMinutes(ANY_DURATION));
         String taskJson = gson.toJson(testTaskTwo);
         URI url = URI.create("http://localhost:8080/tasks/task/");
@@ -184,18 +169,14 @@ public class HttpTaskServerTest {
                 .POST(HttpRequest.BodyPublishers.ofString(taskJson))
                 .build();
 
-        try {
-            response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-        } catch (IOException | InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+        response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
         assertEquals(200, response.statusCode());
         assertEquals(testTaskTwo.getName(), taskManager.getTaskById(2).getName());
     }
 
     @Test
-    public void testPostNewEpicReturn200() {
+    public void testPostNewEpicReturn200() throws IOException, InterruptedException {
         Epic testEpicTwo = new Epic("Имя для теста", "Описание");
         String epicJson = gson.toJson(testEpicTwo);
         URI url = URI.create("http://localhost:8080/tasks/epic/");
@@ -204,18 +185,14 @@ public class HttpTaskServerTest {
                 .POST(HttpRequest.BodyPublishers.ofString(epicJson))
                 .build();
 
-        try {
-            response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-        } catch (IOException | InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+        response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
         assertEquals(200, response.statusCode());
         assertEquals(testEpicTwo.getName(), taskManager.getEpicById(2).getName());
     }
 
     @Test
-    public void testPostNewSubtaskReturn200() {
+    public void testPostNewSubtaskReturn200() throws IOException, InterruptedException {
         Subtask testSubtaskTwo = new Subtask("Имя для теста", "Описание", ANY_DURATION, LocalDateTime.now().plusMinutes(ANY_DURATION * 4), testEpic.getId());
         String subtaskJson = gson.toJson(testSubtaskTwo);
         URI url = URI.create("http://localhost:8080/tasks/subtask/");
@@ -224,18 +201,14 @@ public class HttpTaskServerTest {
                 .POST(HttpRequest.BodyPublishers.ofString(subtaskJson))
                 .build();
 
-        try {
-            response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-        } catch (IOException | InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+        response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
         assertEquals(200, response.statusCode());
         assertEquals(testSubtaskTwo.getName(), taskManager.getSubtaskById(2).getName());
     }
 
     @Test
-    public void testUpdateTaskReturn200() {
+    public void testUpdateTaskReturn200() throws IOException, InterruptedException {
         taskManager.setNewTask(testTask);
 
         Task updateTask = taskManager.getTaskById(2);
@@ -248,18 +221,14 @@ public class HttpTaskServerTest {
                 .POST(HttpRequest.BodyPublishers.ofString(taskJson))
                 .build();
 
-        try {
-            response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-        } catch (IOException | InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+        response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
         assertEquals(200, response.statusCode());
         assertEquals(updateTask.getName(), taskManager.getTaskById(2).getName());
     }
 
     @Test
-    public void testUpdateEpicReturn200() {
+    public void testUpdateEpicReturn200() throws IOException, InterruptedException {
 
         Epic updateEpic = taskManager.getEpicById(1);
         updateEpic.setName("Новое имя");
@@ -271,18 +240,14 @@ public class HttpTaskServerTest {
                 .POST(HttpRequest.BodyPublishers.ofString(epicJson))
                 .build();
 
-        try {
-            response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-        } catch (IOException | InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+        response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
         assertEquals(200, response.statusCode());
         assertEquals(updateEpic.getName(), taskManager.getEpicById(1).getName());
     }
 
     @Test
-    public void testUpdateSubtaskReturn200() {
+    public void testUpdateSubtaskReturn200() throws IOException, InterruptedException {
         taskManager.setNewSubtask(testSubtask);
 
         Subtask updateSubtask = taskManager.getSubtaskById(2);
@@ -295,18 +260,14 @@ public class HttpTaskServerTest {
                 .POST(HttpRequest.BodyPublishers.ofString(subtaskJson))
                 .build();
 
-        try {
-            response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-        } catch (IOException | InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+        response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
         assertEquals(200, response.statusCode());
         assertEquals(updateSubtask.getName(), taskManager.getSubtaskById(2).getName());
     }
 
     @Test
-    public void testGetTasksListReturnCorrectList() {
+    public void testGetTasksListReturnCorrectList() throws IOException, InterruptedException {
         taskManager.setNewTask(testTask);
         taskManager.setNewTask(new Task("1", "2", ANY_DURATION, LocalDateTime.now().plusMinutes(ANY_DURATION * 2)));
 
@@ -316,11 +277,8 @@ public class HttpTaskServerTest {
                 .GET()
                 .build();
 
-        try {
-            response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-        } catch (IOException | InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+        response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+
         ArrayList<Task> taskList = gson.fromJson(response.body(), new TypeToken<ArrayList<Task>>() {
         }.getType());
 
@@ -329,7 +287,7 @@ public class HttpTaskServerTest {
     }
 
     @Test
-    public void testGetEpicListReturnCorrectList() {
+    public void testGetEpicListReturnCorrectList() throws IOException, InterruptedException {
         taskManager.setNewEpic(new Epic("1", "2"));
 
         URI uri = URI.create("http://localhost:8080/tasks/epic");
@@ -338,11 +296,8 @@ public class HttpTaskServerTest {
                 .GET()
                 .build();
 
-        try {
-            response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-        } catch (IOException | InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+        response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+
         ArrayList<Epic> epicList = gson.fromJson(response.body(), new TypeToken<ArrayList<Epic>>() {
         }.getType());
 
@@ -351,7 +306,7 @@ public class HttpTaskServerTest {
     }
 
     @Test
-    public void testGetSubtaskListReturnCorrectList() {
+    public void testGetSubtaskListReturnCorrectList() throws IOException, InterruptedException {
         taskManager.setNewSubtask(testSubtask);
         taskManager.setNewSubtask(new Subtask("Имя", "Описание", ANY_DURATION, LocalDateTime.now().plusMinutes(ANY_DURATION * 6), testEpic.getId()));
 
@@ -361,11 +316,7 @@ public class HttpTaskServerTest {
                 .GET()
                 .build();
 
-        try {
-            response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-        } catch (IOException | InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+        response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
         ArrayList<Subtask> subtasksList = gson.fromJson(response.body(), new TypeToken<ArrayList<Subtask>>() {
         }.getType());
@@ -375,7 +326,7 @@ public class HttpTaskServerTest {
     }
 
     @Test
-    public void testGetHistoryReturnCorrectHistory() {
+    public void testGetHistoryReturnCorrectHistory() throws IOException, InterruptedException {
         taskManager.getEpicById(1);
         taskManager.setNewTask(testTask);
         taskManager.getTaskById(2);
@@ -386,11 +337,8 @@ public class HttpTaskServerTest {
                 .GET()
                 .build();
 
-        try {
-            response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-        } catch (IOException | InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+        response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+
         List<Task> historyInServer = gson.fromJson(response.body(), new TypeToken<ArrayList<Task>>() {
         }.getType());
 
@@ -398,7 +346,7 @@ public class HttpTaskServerTest {
     }
 
     @Test
-    public void testGetPrioritizedReturnCorrectPrioritized() {
+    public void testGetPrioritizedReturnCorrectPrioritized() throws IOException, InterruptedException {
         taskManager.setNewTask(testTask);
 
         URI uri = URI.create("http://localhost:8080/tasks");
@@ -407,11 +355,7 @@ public class HttpTaskServerTest {
                 .GET()
                 .build();
 
-        try {
-            response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-        } catch (IOException | InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+        response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
         List<Task> prioritizedTasks = gson.fromJson(response.body(), new TypeToken<ArrayList<Task>>() {
         }.getType());
@@ -421,8 +365,12 @@ public class HttpTaskServerTest {
 
     @AfterEach
     void tearDown() {
-        kvServer.stop();
         httpTaskServer.stop();
+    }
+
+    @AfterAll
+    static void afterAll() {
+        kvServer.stop();
     }
 
     protected void getTasksForTests() {

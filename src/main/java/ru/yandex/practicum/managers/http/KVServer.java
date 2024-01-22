@@ -40,6 +40,13 @@ public class KVServer {
                     h.sendResponseHeaders(400, 0);
                     return;
                 }
+
+                if (data.get(key) == null) {
+                    System.out.println("Ключ " + key + " не найден");
+                    h.sendResponseHeaders(404, 0);
+                    return;
+                }
+
                 sendText(h, data.get(key));
                 h.sendResponseHeaders(200, 0);
             } else {

@@ -8,7 +8,9 @@ import main.java.ru.yandex.practicum.managers.memory.InMemoryTaskManager;
 import main.java.ru.yandex.practicum.tasks.Epic;
 import main.java.ru.yandex.practicum.tasks.Subtask;
 import main.java.ru.yandex.practicum.tasks.Task;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -18,7 +20,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class HttpTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
-    private KVServer kvServer;
+    private static KVServer kvServer;
     private HttpTaskManager httpTaskManager;
     private HttpTaskServer httpTaskServer;
 
@@ -27,11 +29,15 @@ public class HttpTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
         return Managers.getDefault();
     }
 
+    @BeforeAll
+    static void beforeAll() throws IOException {
+        kvServer = new KVServer();
+        kvServer.start();
+    }
+
     @BeforeEach
     void setUp() {
         try {
-            kvServer = new KVServer();
-            kvServer.start();
             taskManager = createTaskManager();
             httpTaskServer = new HttpTaskServer(taskManager);
             httpTaskServer.start();
@@ -56,7 +62,7 @@ public class HttpTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
         List<Task> history = taskManager.getHistory();
         List<Task> prioritized = taskManager.getPrioritizedTasks();
 
-        httpTaskManager = new HttpTaskManager("http://localhost:8078", "");
+        httpTaskManager = new HttpTaskManager("http://localhost:8078", true);
 
         assertEquals(tasks, httpTaskManager.getAllTask());
         assertEquals(epics, httpTaskManager.getAllEpic());
@@ -76,7 +82,7 @@ public class HttpTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
         List<Task> history = taskManager.getHistory();
         List<Task> prioritized = taskManager.getPrioritizedTasks();
 
-        httpTaskManager = new HttpTaskManager("http://localhost:8078", "");
+        httpTaskManager = new HttpTaskManager("http://localhost:8078", true);
 
         assertEquals(tasks, httpTaskManager.getAllTask());
         assertEquals(epics, httpTaskManager.getAllEpic());
@@ -95,7 +101,7 @@ public class HttpTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
         List<Task> history = taskManager.getHistory();
         List<Task> prioritized = taskManager.getPrioritizedTasks();
 
-        httpTaskManager = new HttpTaskManager("http://localhost:8078", "");
+        httpTaskManager = new HttpTaskManager("http://localhost:8078", true);
 
         assertEquals(tasks, httpTaskManager.getAllTask());
         assertEquals(epics, httpTaskManager.getAllEpic());
@@ -106,8 +112,12 @@ public class HttpTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
 
     @AfterEach
     void tearDown() {
-        kvServer.stop();
         httpTaskServer.stop();
+    }
+
+    @AfterAll
+    static void afterAll() {
+        kvServer.stop();
     }
 }
 
